@@ -32,7 +32,68 @@
     font-family: 'Inter', sans-serif;
     padding: 40px 24px 80px;
   }
-  .wrap { max-width: 920px; margin: 0 auto; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+  }
+  .main-col { min-width: 0; }
+  .side-col { display: flex; flex-direction: column; gap: 14px; }
+  @media (max-width: 900px) {
+    .dash-grid { grid-template-columns: 1fr; }
+  }
+
+  .side-card {
+    background: var(--panel);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .side-card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0 0 12px;
+  }
+
+  .inst-empty { font-size: 12.5px; color: var(--text-faint); line-height: 1.5; }
+  .inst-item { padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .inst-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .inst-item-name { font-size: 13px; font-weight: 500; margin: 0 0 6px; }
+  .inst-item-row { display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .inst-progress-track { height: 5px; background: var(--line-soft); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .inst-progress-fill { height: 100%; background: var(--violet); border-radius: 3px; }
+  #tab-personal .inst-progress-fill { background: var(--gold); }
+  .inst-remaining { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--text); }
+  .inst-remaining span { color: var(--text-faint); }
+
+  .cal-header { display: flex; justify-content: center; margin-bottom: 10px; }
+  .cal-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14px; margin: 0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); text-align: center; padding-bottom: 4px; }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: default;
+    position: relative;
+  }
+  .cal-day.has-due { cursor: pointer; background: var(--panel-2); color: var(--text); }
+  .cal-day.has-due:hover { background: var(--line); }
+  .cal-day.armed { outline: 1.5px solid var(--gold); background: var(--gold-dim); color: var(--text); }
+  .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--teal); margin-top: 2px; }
+  #tab-shared .cal-dot { background: var(--violet); }
+  .cal-hint { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin: 10px 0 0; line-height: 1.5; }
+  .cal-hint.armed-hint { color: var(--gold); }
+
 
   .tabs { display: flex; gap: 6px; margin-bottom: 20px; }
   .tab-btn {
@@ -205,12 +266,15 @@
   }
   .name-cell input:hover, .name-cell input:focus { background: var(--panel-2); outline: none; }
   .due-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10.5px;
     color: var(--text-faint);
     padding: 1px 6px 0;
   }
-  .due-tag input {
+  .due-tag input[type="text"] {
     background: transparent;
     border: none;
     color: var(--text-faint);
@@ -218,8 +282,56 @@
     font-size: 10.5px;
     width: 100%;
     padding: 2px 0;
+    flex: 1;
+    min-width: 0;
   }
-  .due-tag input:hover, .due-tag input:focus { color: var(--text-dim); outline: none; }
+  .due-tag input[type="text"]:hover, .due-tag input[type="text"]:focus { color: var(--text-dim); outline: none; }
+  .due-tag input[type="date"] {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    width: 108px;
+    color-scheme: dark;
+  }
+  .due-tag input[type="date"]:hover, .due-tag input[type="date"]:focus { border-color: var(--text-faint); outline: none; }
+
+  .inst-toggle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+    padding: 3px 6px 0;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .inst-toggle:hover { color: var(--gold); }
+  .inst-toggle.on { color: var(--violet); }
+  #tab-personal .inst-toggle.on { color: var(--gold); }
+  .inst-row-fields {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 6px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+  .inst-row-fields input {
+    width: 40px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .inst-row-fields input:focus { outline: none; border-color: var(--gold); }
 
   .amount-cell { display: flex; align-items: center; gap: 3px; }
   .amount-cell span { color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
@@ -414,42 +526,59 @@ const PANEL_TEMPLATE = (id, kind) => `
     </div>
   </div>
 
-  <div class="stats">
-    <div class="stat">
-      <p class="stat-label">Total due</p>
-      <p class="stat-value" id="${id}-stat-total">&#8369;0</p>
-      <p class="stat-sub" id="${id}-stat-count">0 items</p>
-    </div>
-    <div class="stat paid">
-      <p class="stat-label">Paid so far</p>
-      <p class="stat-value" id="${id}-stat-paid">&#8369;0</p>
-      <div class="progress-track"><div class="progress-fill" id="${id}-progress-fill" style="width:0%"></div></div>
-    </div>
-    <div class="stat remaining">
-      <p class="stat-label">Still owed</p>
-      <p class="stat-value ${kind === 'personal' ? 'g' : 'v'}" id="${id}-stat-remaining">&#8369;0</p>
-      <p class="stat-sub" id="${id}-stat-pct">0% paid</p>
-    </div>
-  </div>
+  <div class="dash-grid">
+    <div class="main-col">
+      <div class="stats">
+        <div class="stat">
+          <p class="stat-label">Total due</p>
+          <p class="stat-value" id="${id}-stat-total">&#8369;0</p>
+          <p class="stat-sub" id="${id}-stat-count">0 items</p>
+        </div>
+        <div class="stat paid">
+          <p class="stat-label">Paid so far</p>
+          <p class="stat-value" id="${id}-stat-paid">&#8369;0</p>
+          <div class="progress-track"><div class="progress-fill" id="${id}-progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="stat remaining">
+          <p class="stat-label">Still owed</p>
+          <p class="stat-value ${kind === 'personal' ? 'g' : 'v'}" id="${id}-stat-remaining">&#8369;0</p>
+          <p class="stat-sub" id="${id}-stat-pct">0% paid</p>
+        </div>
+      </div>
 
-  <div class="ledger">
-    <div class="ledger-head">
-      <div></div>
-      <div>Expense</div>
-      <div style="text-align:right">Amount</div>
-      <div>Paid</div>
-      <div>Paid on</div>
-      <div></div>
-    </div>
-    <div id="${id}-rows"></div>
-    <div class="add-row">
-      <button id="${id}-add-expense-btn">+ Add expense</button>
-    </div>
-  </div>
+      <div class="ledger">
+        <div class="ledger-head">
+          <div></div>
+          <div>Expense</div>
+          <div style="text-align:right">Amount</div>
+          <div>Paid</div>
+          <div>Paid on</div>
+          <div></div>
+        </div>
+        <div id="${id}-rows"></div>
+        <div class="add-row">
+          <button id="${id}-add-expense-btn">+ Add expense</button>
+        </div>
+      </div>
 
-  <div class="footer-actions">
-    <span class="footer-note" id="${id}-save-note">Saved automatically to this browser</span>
-    <button class="btn-ghost" id="${id}-dup-btn">Copy previous month &rarr;</button>
+      <div class="footer-actions">
+        <span class="footer-note" id="${id}-save-note">Saved automatically to this browser</span>
+        <button class="btn-ghost" id="${id}-dup-btn">Copy previous month &rarr;</button>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <div class="side-card">
+        <p class="side-card-title">Installments</p>
+        <div id="${id}-installments"></div>
+      </div>
+      <div class="side-card">
+        <p class="side-card-title">Payment calendar</p>
+        <div class="cal-header"><p class="cal-title" id="${id}-cal-title">Month</p></div>
+        <div class="cal-grid" id="${id}-cal-grid"></div>
+        <p class="cal-hint" id="${id}-cal-hint">Click a due date, then click a new date to move it.</p>
+      </div>
+    </div>
   </div>
 `;
 
@@ -531,31 +660,31 @@ const SEEDS = {
   personal: {
     month: '2026-07',
     items: [
-      { name: 'Gaming Laptop - Ggives', amount: 5355, due: 'Every 3rd', paid: true, paidDate: '' },
-      { name: 'Water Bill', amount: 750, due: '', paid: false, paidDate: '' },
-      { name: 'PLDT WiFi', amount: 2000, due: 'Every 10th', paid: true, paidDate: '' },
-      { name: 'Lazada Paylater', amount: 1180, due: 'Every 15th', paid: true, paidDate: '' },
-      { name: 'Electricity Bill', amount: 3800, due: 'Every 13th', paid: true, paidDate: '' },
-      { name: 'Oreo GLoan', amount: 920, due: 'Every 14th', paid: true, paidDate: '' },
-      { name: 'iPhone 16 Pro Smart Plan', amount: 3371, due: 'Every 30th', paid: true, paidDate: '' },
-      { name: 'Converge WiFi', amount: 1500, due: 'Every 20th', paid: true, paidDate: '' },
-      { name: 'Spotify', amount: 279, due: 'Every 21st', paid: false, paidDate: '' },
-      { name: 'Gym', amount: 2100, due: 'Every 27th', paid: false, paidDate: '' },
-      { name: 'GCredit (GCash)', amount: 591, due: 'Every 24th', paid: true, paidDate: '' },
-      { name: 'LG Split Type Aircon - Home Credit', amount: 3536, due: 'Every 23rd', paid: true, paidDate: '' },
-      { name: 'Xiaomi Pad 8 - GLoan', amount: 3672, due: 'Every 20th', paid: true, paidDate: '' },
-      { name: 'DJI Osmo Action Cam - Lazada', amount: 1581, due: 'Every 16th', paid: true, paidDate: '' },
+      { name: 'Gaming Laptop - Ggives', amount: 5355, due: 'Every 3rd', dueDate: '2026-07-03', paid: true, paidDate: '', isInstallment: true, instPaid: 12, instTotal: 24 },
+      { name: 'Water Bill', amount: 750, due: '', dueDate: '', paid: false, paidDate: '' },
+      { name: 'PLDT WiFi', amount: 2000, due: 'Every 10th', dueDate: '2026-07-10', paid: true, paidDate: '' },
+      { name: 'Lazada Paylater', amount: 1180, due: 'Every 15th', dueDate: '2026-07-15', paid: true, paidDate: '' },
+      { name: 'Electricity Bill', amount: 3800, due: 'Every 13th', dueDate: '2026-07-13', paid: true, paidDate: '' },
+      { name: 'Oreo GLoan', amount: 920, due: 'Every 14th', dueDate: '2026-07-14', paid: true, paidDate: '', isInstallment: true, instPaid: 4, instTotal: 12 },
+      { name: 'iPhone 16 Pro Smart Plan', amount: 3371, due: 'Every 30th', dueDate: '2026-07-30', paid: true, paidDate: '' },
+      { name: 'Converge WiFi', amount: 1500, due: 'Every 20th', dueDate: '2026-07-20', paid: true, paidDate: '' },
+      { name: 'Spotify', amount: 279, due: 'Every 21st', dueDate: '2026-07-21', paid: false, paidDate: '' },
+      { name: 'Gym', amount: 2100, due: 'Every 27th', dueDate: '2026-07-27', paid: false, paidDate: '' },
+      { name: 'GCredit (GCash)', amount: 591, due: 'Every 24th', dueDate: '2026-07-24', paid: true, paidDate: '' },
+      { name: 'LG Split Type Aircon - Home Credit', amount: 3536, due: 'Every 23rd', dueDate: '2026-07-23', paid: true, paidDate: '', isInstallment: true, instPaid: 8, instTotal: 24 },
+      { name: 'Xiaomi Pad 8 - GLoan', amount: 3672, due: 'Every 20th', dueDate: '2026-07-20', paid: true, paidDate: '', isInstallment: true, instPaid: 3, instTotal: 12 },
+      { name: 'DJI Osmo Action Cam - Lazada', amount: 1581, due: 'Every 16th', dueDate: '2026-07-16', paid: true, paidDate: '', isInstallment: true, instPaid: 2, instTotal: 6 },
     ]
   },
   shared: {
     month: '2026-07',
     items: [
-      { name: 'Jasmine Allowance', amount: 6495, due: 'Weekly, ~1500/wk', paid: false, paidDate: '' },
-      { name: 'Caregiver Share', amount: 10000, due: '', paid: false, paidDate: '' },
-      { name: "Dad's PT Full", amount: 4763, due: '', paid: false, paidDate: '' },
-      { name: "Dad's PT Half", amount: 10600, due: '', paid: false, paidDate: '' },
-      { name: 'Jasmine Dorm Share', amount: 6300, due: '', paid: false, paidDate: '' },
-      { name: 'Jasmine Tuition Share', amount: 10615, due: '', paid: false, paidDate: '' },
+      { name: 'Jasmine Allowance', amount: 6495, due: 'Weekly, ~1500/wk', dueDate: '', paid: false, paidDate: '' },
+      { name: 'Caregiver Share', amount: 10000, due: '', dueDate: '', paid: false, paidDate: '' },
+      { name: "Dad's PT Full", amount: 4763, due: '', dueDate: '', paid: false, paidDate: '' },
+      { name: "Dad's PT Half", amount: 10600, due: '', dueDate: '', paid: false, paidDate: '' },
+      { name: 'Jasmine Dorm Share', amount: 6300, due: '', dueDate: '', paid: false, paidDate: '' },
+      { name: 'Jasmine Tuition Share', amount: 10615, due: '', dueDate: '', paid: false, paidDate: '' },
     ]
   }
 };
@@ -566,7 +695,7 @@ function makeTracker(id, kind) {
   const LEGACY_MONTH_LIST_KEY = kind === 'personal' ? 'expense-months-list' : null;
   const legacyMonthKeyFn = (m) => 'expenses:' + m;
 
-  const state = { months: [], currentMonth: SEEDS[kind].month, items: [], idCounter: 1 };
+  const state = { months: [], currentMonth: SEEDS[kind].month, items: [], idCounter: 1, selectedMoveId: null };
 
   function uid() { return id + '_' + (state.idCounter++) + '_' + Date.now().toString(36); }
 
@@ -660,6 +789,111 @@ function makeTracker(id, kind) {
     document.getElementById(id + '-month-title').textContent = monthLabel(state.currentMonth);
   }
 
+  function renderInstallments() {
+    const container = document.getElementById(id + '-installments');
+    if (!container) return;
+    const items = state.items.filter(i => i.isInstallment);
+    if (!items.length) {
+      container.innerHTML = '<p class="inst-empty">No installments yet. Click "+ Installment" under any expense to track payments made and balance left.</p>';
+      return;
+    }
+    container.innerHTML = items.map(item => {
+      const total = item.instTotal;
+      const paidCount = item.instPaid || 0;
+      const pct = total ? Math.min(100, Math.round((paidCount / total) * 100)) : 0;
+      const remainingBal = total ? Math.max(0, (total - paidCount) * Number(item.amount || 0)) : null;
+      return `
+        <div class="inst-item">
+          <p class="inst-item-name">${escapeAttr(item.name || '(unnamed)')}</p>
+          <div class="inst-item-row"><span>${paidCount} / ${total || '?'} payments</span><span>${total ? pct + '%' : ''}</span></div>
+          <div class="inst-progress-track"><div class="inst-progress-fill" style="width:${pct}%"></div></div>
+          <div class="inst-remaining">${remainingBal !== null ? peso(remainingBal) + ' <span>left</span>' : '<span>Set total payments to see balance</span>'}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function dayOfMonth(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return null;
+    const [y, m] = parts;
+    if (`${y}-${m}` !== state.currentMonth) return null;
+    return parseInt(parts[2], 10);
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById(id + '-cal-grid');
+    const titleEl = document.getElementById(id + '-cal-title');
+    const hintEl = document.getElementById(id + '-cal-hint');
+    if (!grid) return;
+    titleEl.textContent = monthLabel(state.currentMonth);
+
+    const [y, m] = state.currentMonth.split('-').map(Number);
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const firstWeekday = new Date(y, m - 1, 1).getDay();
+
+    const dueMap = {};
+    state.items.forEach(item => {
+      const d = dayOfMonth(item.dueDate);
+      if (d) { (dueMap[d] = dueMap[d] || []).push(item); }
+    });
+
+    const armedItem = state.selectedMoveId ? getItem(state.selectedMoveId) : null;
+    const armedDay = armedItem ? dayOfMonth(armedItem.dueDate) : null;
+
+    let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+    for (let i = 0; i < firstWeekday; i++) html += '<div class="cal-day"></div>';
+    for (let day = 1; day <= daysInMonth; day++) {
+      const due = dueMap[day];
+      const classes = ['cal-day'];
+      if (due) classes.push('has-due');
+      if (armedDay === day) classes.push('armed');
+      html += `<div class="${classes.join(' ')}" data-day="${day}">${day}${due ? `<div class="cal-dot"></div>` : ''}</div>`;
+    }
+    grid.innerHTML = html;
+
+    if (armedItem) {
+      hintEl.textContent = `Moving "${armedItem.name || '(unnamed)'}" — click a new date, or click its current date again to cancel.`;
+      hintEl.classList.add('armed-hint');
+    } else {
+      hintEl.textContent = 'Click a due date, then click a new date to move it.';
+      hintEl.classList.remove('armed-hint');
+    }
+  }
+
+  document.getElementById(id + '-cal-grid').addEventListener('click', (e) => {
+    const cell = e.target.closest('.cal-day');
+    if (!cell || !cell.dataset.day) return;
+    const day = parseInt(cell.dataset.day, 10);
+    const [y, m] = state.currentMonth.split('-').map(Number);
+    const clickedDate = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    if (state.selectedMoveId) {
+      const item = getItem(state.selectedMoveId);
+      state.selectedMoveId = null;
+      if (item) {
+        item.dueDate = clickedDate;
+        renderRows();
+        persist();
+      }
+      renderCalendar();
+      return;
+    }
+
+    const dueItems = state.items.filter(i => dayOfMonth(i.dueDate) === day);
+    if (!dueItems.length) return;
+    if (dueItems.length === 1) {
+      state.selectedMoveId = dueItems[0].id;
+    } else {
+      const list = dueItems.map((it, idx) => `${idx + 1}. ${it.name || '(unnamed)'}`).join('\n');
+      const choice = window.prompt(`Multiple expenses due this day — enter a number to move one:\n${list}`);
+      const idx = parseInt(choice, 10) - 1;
+      if (dueItems[idx]) state.selectedMoveId = dueItems[idx].id;
+    }
+    renderCalendar();
+  });
+
   function escapeAttr(s) {
     return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   }
@@ -678,7 +912,18 @@ function makeTracker(id, kind) {
         </div>
         <div class="name-cell">
           <input type="text" value="${escapeAttr(item.name)}" data-field="name" placeholder="Expense name" />
-          <div class="due-tag"><input type="text" value="${escapeAttr(item.due || '')}" data-field="due" placeholder="Notes" /></div>
+          <div class="due-tag">
+            <input type="text" value="${escapeAttr(item.due || '')}" data-field="due" placeholder="Notes" />
+            <input type="date" value="${escapeAttr(item.dueDate || '')}" data-field="dueDate" title="Payment due date" />
+          </div>
+          <div class="inst-toggle ${item.isInstallment ? 'on' : ''}" data-field="instToggle">${item.isInstallment ? '&#10003; Installment' : '+ Installment'}</div>
+          ${item.isInstallment ? `
+          <div class="inst-row-fields">
+            <input type="number" min="0" value="${item.instPaid || 0}" data-field="instPaid" title="Payments made" />
+            <span>/</span>
+            <input type="number" min="0" value="${item.instTotal || ''}" data-field="instTotal" placeholder="total" title="Total payments" />
+            <span>paid</span>
+          </div>` : ''}
         </div>
         <div class="amount-cell">
           <span>&#8369;</span>
@@ -757,8 +1002,8 @@ function makeTracker(id, kind) {
     persist();
   });
 
-
   async function persist() { await saveMonth(state.currentMonth, state.items); }
+
 
   document.getElementById(id + '-rows').addEventListener('input', (e) => {
     const field = e.target.dataset.field;
@@ -767,14 +1012,19 @@ function makeTracker(id, kind) {
     const item = getItem(row.dataset.id);
     if (!item) return;
     if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
+    else if (field === 'instPaid') item.instPaid = parseInt(e.target.value, 10) || 0;
+    else if (field === 'instTotal') item.instTotal = e.target.value === '' ? null : (parseInt(e.target.value, 10) || 0);
     else item[field] = e.target.value;
     renderStats();
+    renderInstallments();
+    renderCalendar();
     persist();
   });
 
   document.getElementById(id + '-rows').addEventListener('click', (e) => {
     const checkbox = e.target.closest('.checkbox');
     const delBtn = e.target.closest('.del-btn');
+    const instToggle = e.target.closest('.inst-toggle');
     if (checkbox) {
       const row = checkbox.closest('.row');
       const item = getItem(row.dataset.id);
@@ -783,6 +1033,17 @@ function makeTracker(id, kind) {
       item.paidDate = item.paid ? todayStr() : '';
       renderRows();
       renderStats();
+      renderInstallments();
+      persist();
+      return;
+    }
+    if (instToggle) {
+      const row = instToggle.closest('.row');
+      const item = getItem(row.dataset.id);
+      if (!item) return;
+      item.isInstallment = !item.isInstallment;
+      renderRows();
+      renderInstallments();
       persist();
       return;
     }
@@ -791,14 +1052,18 @@ function makeTracker(id, kind) {
       state.items = state.items.filter(i => i.id !== row.dataset.id);
       renderRows();
       renderStats();
+      renderInstallments();
+      renderCalendar();
       persist();
     }
   });
 
   document.getElementById(id + '-add-expense-btn').addEventListener('click', () => {
-    state.items.push({ id: uid(), name: '', amount: 0, due: '', paid: false, paidDate: '' });
+    state.items.push({ id: uid(), name: '', amount: 0, due: '', dueDate: '', paid: false, paidDate: '', isInstallment: false, instPaid: 0, instTotal: null });
     renderRows();
     renderStats();
+    renderInstallments();
+    renderCalendar();
     const inputs = document.querySelectorAll('#' + id + '-rows .name-cell input');
     if (inputs.length) inputs[inputs.length - 1].focus();
     persist();
@@ -831,8 +1096,11 @@ function makeTracker(id, kind) {
     const prevItems = await loadMonth(prevKey);
     if (!prevItems || !prevItems.length) { alert('That month has no items to copy.'); return; }
     state.items = prevItems.map(it => ({ ...it, id: uid(), paid: false, paidDate: '' }));
+    state.selectedMoveId = null;
     renderRows();
     renderStats();
+    renderInstallments();
+    renderCalendar();
     persist();
   });
 
@@ -853,8 +1121,11 @@ function makeTracker(id, kind) {
       }
     }
     state.items = data;
+    state.selectedMoveId = null;
     renderRows();
     renderStats();
+    renderInstallments();
+    renderCalendar();
   }
 
   async function init() {
