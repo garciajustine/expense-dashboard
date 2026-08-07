@@ -730,17 +730,31 @@ function makeTracker(id, kind) {
   }
 
   async function loadMonthsList() {
-    try {
-      const res = await storage.get(MONTH_LIST_KEY, false);
-      if (res && res.value) return JSON.parse(res.value);
-    } catch (e) {}
+    // Retry a few times before giving up — on a fresh boot the first fetch can
+    // fail (Wi-Fi/network not fully up, Apps Script cold start) and we must not
+    // mistake that for "no months saved yet".
+    const MAX_ATTEMPTS = 3;
+    let confirmed = false;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const res = await storage.get(MONTH_LIST_KEY, false);
+        confirmed = true;
+        if (res && res.value) return { months: JSON.parse(res.value), ok: true };
+        break; // reached the server; it genuinely has no value for this key yet
+      } catch (e) {
+        if (attempt < MAX_ATTEMPTS) await new Promise(r => setTimeout(r, 500 * attempt));
+      }
+    }
     if (LEGACY_MONTH_LIST_KEY) {
       try {
         const res = await storage.get(LEGACY_MONTH_LIST_KEY, false);
-        if (res && res.value) return JSON.parse(res.value);
+        confirmed = true;
+        if (res && res.value) return { months: JSON.parse(res.value), ok: true };
       } catch (e) {}
     }
-    return null;
+    // ok: false means we never got a confirmed response from the server —
+    // caller must NOT treat this as "no months" and must NOT save over it.
+    return { months: null, ok: confirmed };
   }
 
   async function saveMonthsList() {
@@ -1168,17 +1182,32 @@ function makeTracker(id, kind) {
   }
 
   async function init() {
-    const storedMonths = await loadMonthsList();
+    const { months: storedMonths, ok } = await loadMonthsList();
+
     if (storedMonths && storedMonths.length) {
       state.months = storedMonths;
-      if (!state.months.includes(SEEDS[kind].month)) { state.months.push(SEEDS[kind].month); state.months.sort(); }
-    } else {
+      if (!state.months.includes(SEEDS[kind].month)) {
+        state.months.push(SEEDS[kind].month);
+        state.months.sort();
+        await saveMonthsList();
+      }
+    } else if (ok) {
+      // Server was reached and genuinely has no months list yet — safe to seed it.
       state.months = [SEEDS[kind].month];
+      await saveMonthsList();
+    } else {
+      // Could not confirm the server's real list after retries (offline / cold boot).
+      // Fall back to showing just the seed month locally, but DO NOT save this —
+      // saving here would permanently erase any months (like a newly-added August)
+      // that only failed to load, not failed to exist.
+      state.months = [SEEDS[kind].month];
+      document.getElementById(id + '-save-note').textContent =
+        'Could not reach your sheet — showing offline view. Reload once you\u2019re back online.';
     }
+
     state.currentMonth = state.months[state.months.length - 1];
     renderMonthSelect();
     await switchToMonth(state.currentMonth);
-    await saveMonthsList();
   }
 
   init();
