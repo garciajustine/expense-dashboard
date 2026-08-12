@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Expense Ledger</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2314171C%22/%3E%3Cpath%20d%3D%22M18%2010h28a3%203%200%200%201%203%203v38l-5-4-5%204-5-4-5%204-5-4-5%204-5-4V13a3%203%200%200%201%203-3z%22%20fill%3D%22%231B1F27%22%20stroke%3D%22%23F2C744%22%20stroke-width%3D%222.5%22%20stroke-linejoin%3D%22round%22/%3E%3Cline%20x1%3D%2223%22%20y1%3D%2222%22%20x2%3D%2241%22%20y2%3D%2222%22%20stroke%3D%22%23F2C744%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%3Cline%20x1%3D%2223%22%20y1%3D%2230%22%20x2%3D%2241%22%20y2%3D%2230%22%20stroke%3D%22%235F6673%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M23%2039l4%204%208-8%22%20stroke%3D%22%234FCBAF%22%20stroke-width%3D%223%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,13 +29,19 @@
     --violet: #9B8CF2;
     --violet-dim: #362F63;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter', sans-serif;
     padding: 40px 24px 80px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    padding-bottom: max(80px, env(safe-area-inset-bottom) + 60px);
+    overflow-x: hidden;
+    min-width: 320px;
   }
   .wrap { max-width: 1180px; margin: 0 auto; }
 
@@ -477,7 +487,9 @@
   #app-content { display: none; }
   #app-content.ready { display: block; }
   #reset-config {
-    position: fixed; bottom: 16px; right: 16px;
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    right: max(16px, env(safe-area-inset-right));
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10.5px;
     color: var(--text-faint);
@@ -487,8 +499,29 @@
   #reset-config:hover { opacity: 1; }
 
 
+  /* ===== Tablet (iPad portrait, small laptops) ===== */
+  @media (max-width: 900px) {
+    body { padding-top: 28px; }
+    h1 { font-size: 26px; }
+    .topbar { margin-bottom: 22px; }
+  }
+
+  /* ===== Phones (iPhone SE through iPhone Pro Max, small Android) ===== */
   @media (max-width: 640px) {
-    .stats { grid-template-columns: 1fr 1fr; }
+    body { padding: 20px 14px 80px; padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+    h1 { font-size: 22px; }
+    .eyebrow { font-size: 10px; }
+    .tabs { margin-bottom: 16px; }
+    .tab-btn { padding: 10px 14px; font-size: 12.5px; }
+
+    .topbar { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 20px; }
+    .month-controls { justify-content: space-between; }
+    .month-controls select { flex: 1; min-width: 0; }
+
+    .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat { padding: 12px 14px; }
+    .stat-value { font-size: 19px; }
+
     .ledger-head { display: none; }
     .row {
       grid-template-columns: 1fr;
@@ -499,6 +532,37 @@
     .amount-cell::before { content: 'Amount'; color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; font-size: 10px; margin-right: auto; }
     .date-cell::before { content: 'Paid on'; color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
     .del-btn { justify-self: end; }
+
+    .side-col { gap: 12px; }
+    .cal-day { font-size: 12px; }
+
+    #setup-gate { margin: 40px 16px; padding: 22px 18px; }
+
+    /* Bigger touch targets so fingers can hit them reliably */
+    .checkbox { width: 24px; height: 24px; }
+    .del-btn { width: 34px; height: 34px; }
+    .drag-handle { width: 28px; height: 34px; }
+    .date-picker-wrap { width: 24px; height: 24px; }
+    button, select { min-height: 40px; }
+    .tab-btn { min-height: 40px; }
+
+    /* iOS Safari zooms the whole page in when a focused input has font-size < 16px.
+       Force real inputs the user types into up to 16px so focusing them doesn't zoom. */
+    .name-cell input,
+    .amount-cell input,
+    .date-cell input,
+    .due-tag input[type="text"],
+    .inst-row-fields input,
+    #setup-gate input,
+    select {
+      font-size: 16px;
+    }
+  }
+
+  /* Very small phones (iPhone SE / mini widths) */
+  @media (max-width: 380px) {
+    .stats { grid-template-columns: 1fr; }
+    .stat-value { font-size: 22px; }
   }
 </style>
 </head>
