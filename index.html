@@ -607,8 +607,20 @@ document.getElementById('tab-shared').innerHTML = PANEL_TEMPLATE('shared', 'shar
 
 const CONFIG_KEY = 'expense-dashboard-config';
 
+// Hardcoded default so this device/browser never has to go through the Connect
+// screen. Note: since GitHub Pages serves this file publicly, this passphrase
+// is visible to anyone who views the page source of this repo.
+const DEFAULT_CONFIG = {
+  url: 'https://script.google.com/macros/s/AKfycbw5tbBtuU7EMAY1Cz2r-b04EdschvYz1lhilGrHUc0BNoQK5g8LLVnrSy-DHRbTIIu5/exec',
+  pass: 'AWPdust2!'
+};
+
 function getConfig() {
-  try { return JSON.parse(localStorage.getItem(CONFIG_KEY)); } catch (e) { return null; }
+  try {
+    const stored = JSON.parse(localStorage.getItem(CONFIG_KEY));
+    if (stored && stored.url && stored.pass) return stored;
+  } catch (e) {}
+  return DEFAULT_CONFIG;
 }
 function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
 function clearConfig() { localStorage.removeItem(CONFIG_KEY); }
@@ -1185,24 +1197,26 @@ function makeTracker(id, kind) {
     const { months: storedMonths, ok } = await loadMonthsList();
 
     if (storedMonths && storedMonths.length) {
+      // Got a real, non-empty list back from the server — trust it fully.
       state.months = storedMonths;
       if (!state.months.includes(SEEDS[kind].month)) {
         state.months.push(SEEDS[kind].month);
         state.months.sort();
         await saveMonthsList();
       }
-    } else if (ok) {
-      // Server was reached and genuinely has no months list yet — safe to seed it.
-      state.months = [SEEDS[kind].month];
-      await saveMonthsList();
     } else {
-      // Could not confirm the server's real list after retries (offline / cold boot).
-      // Fall back to showing just the seed month locally, but DO NOT save this —
-      // saving here would permanently erase any months (like a newly-added August)
-      // that only failed to load, not failed to exist.
+      // Either the fetch failed outright, or it "succeeded" but came back empty.
+      // We can't fully trust an empty response on a cold start (Apps Script / Sheets
+      // reads can return before the sheet is done indexing), so we NEVER write
+      // anything back to the server from here — only an explicit "+ Month" click
+      // is allowed to modify the saved months list. This guarantees a bad or
+      // slow read can make the UI look wrong for a moment, but can never
+      // permanently erase real data on the server.
       state.months = [SEEDS[kind].month];
-      document.getElementById(id + '-save-note').textContent =
-        'Could not reach your sheet — showing offline view. Reload once you\u2019re back online.';
+      if (!ok) {
+        document.getElementById(id + '-save-note').textContent =
+          'Could not reach your sheet — showing offline view. Reload once you\u2019re back online.';
+      }
     }
 
     state.currentMonth = state.months[state.months.length - 1];
