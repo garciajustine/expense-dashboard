@@ -148,7 +148,17 @@
     margin: 0;
     letter-spacing: -0.01em;
   }
-  .month-controls { display: flex; align-items: center; gap: 8px; }
+  .month-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-btn svg { width: 15px; height: 15px; }
+  .icon-btn.spinning svg { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .danger-hover:hover { border-color: var(--red-dim); background: var(--red-dim); color: var(--red); }
   select {
     background: var(--panel);
     color: var(--text);
@@ -448,6 +458,62 @@
   .panel-view { display: none; }
   .panel-view.active { display: block; }
 
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 12, 15, 0.72);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 0 0 10px;
+    color: var(--red);
+  }
+  .modal-body {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+  .modal-body strong { color: var(--text); font-weight: 600; }
+  .modal-input {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+  .modal-input:focus { outline: none; border-color: var(--red); }
+  .modal-error { color: var(--red); font-size: 12px; min-height: 16px; margin: 8px 0 0; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+  .btn-danger {
+    background: var(--red);
+    border-color: var(--red);
+    color: #2A1310;
+    font-weight: 600;
+  }
+  .btn-danger:hover { background: #c85a41; border-color: #c85a41; }
+  .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; background: var(--red); border-color: var(--red); }
+
   #setup-gate {
     max-width: 480px;
     margin: 80px auto;
@@ -607,6 +673,12 @@ const PANEL_TEMPLATE = (id, kind) => `
     <div class="month-controls">
       <select id="${id}-month-select"></select>
       <button class="btn-ghost" id="${id}-new-month-btn" title="Add a new month">+ Month</button>
+      <button class="btn-ghost icon-btn" id="${id}-sync-btn" title="Re-sync with your sheet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.3M3 12a9 9 0 0 1 15.5-6.3"/><path d="M21 3v6h-6M3 21v-6h6"/></svg>
+      </button>
+      <button class="btn-ghost icon-btn danger-hover" id="${id}-delete-month-btn" title="Delete this month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+      </button>
     </div>
   </div>
 
@@ -661,6 +733,28 @@ const PANEL_TEMPLATE = (id, kind) => `
         <div class="cal-header"><p class="cal-title" id="${id}-cal-title">Month</p></div>
         <div class="cal-grid" id="${id}-cal-grid"></div>
         <p class="cal-hint" id="${id}-cal-hint">Click a due date, then click a new date to move it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="${id}-delete-modal">
+    <div class="modal-box">
+      <p class="modal-title" id="${id}-delete-step1-title">Delete this month?</p>
+      <div id="${id}-delete-step1">
+        <p class="modal-body" id="${id}-delete-step1-body">This will permanently remove this month and everything in it. This can't be undone.</p>
+        <div class="modal-actions">
+          <button class="btn-ghost" id="${id}-delete-cancel-1">Cancel</button>
+          <button class="btn-danger" id="${id}-delete-continue">Continue</button>
+        </div>
+      </div>
+      <div id="${id}-delete-step2" style="display:none">
+        <p class="modal-body">To confirm, type <strong id="${id}-delete-confirm-label"></strong> below.</p>
+        <input type="text" id="${id}-delete-confirm-input" class="modal-input" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <p class="modal-error" id="${id}-delete-error"></p>
+        <div class="modal-actions">
+          <button class="btn-ghost" id="${id}-delete-cancel-2">Cancel</button>
+          <button class="btn-danger" id="${id}-delete-confirm-btn" disabled>Delete month</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1231,6 +1325,107 @@ function makeTracker(id, kind) {
     renderInstallments();
     renderCalendar();
     persist();
+  });
+
+  // ---- Sync: re-pull the months list + current month fresh from the sheet ----
+  const syncBtn = document.getElementById(id + '-sync-btn');
+  syncBtn.addEventListener('click', async () => {
+    if (syncBtn.classList.contains('spinning')) return;
+    syncBtn.classList.add('spinning');
+    const note = document.getElementById(id + '-save-note');
+    const prevNote = note.textContent;
+    note.textContent = 'Syncing…';
+    try {
+      const { months: freshMonths, ok } = await loadMonthsList();
+      if (ok && freshMonths && freshMonths.length) {
+        state.months = freshMonths;
+        if (!state.months.includes(state.currentMonth)) {
+          state.currentMonth = state.months[state.months.length - 1];
+        }
+        renderMonthSelect();
+        await switchToMonth(state.currentMonth);
+        note.textContent = 'Synced just now';
+        setTimeout(() => { note.textContent = prevNote; }, 1800);
+      } else {
+        note.textContent = 'Sync failed — check your connection';
+        setTimeout(() => { note.textContent = prevNote; }, 2500);
+      }
+    } catch (e) {
+      note.textContent = 'Sync failed — check your connection';
+      setTimeout(() => { note.textContent = prevNote; }, 2500);
+    } finally {
+      syncBtn.classList.remove('spinning');
+    }
+  });
+
+  // ---- Delete month: two-step confirm (Continue, then type the month name) ----
+  const deleteModal = document.getElementById(id + '-delete-modal');
+  const step1 = document.getElementById(id + '-delete-step1');
+  const step2 = document.getElementById(id + '-delete-step2');
+  const confirmInput = document.getElementById(id + '-delete-confirm-input');
+  const confirmBtn = document.getElementById(id + '-delete-confirm-btn');
+  const confirmLabelEl = document.getElementById(id + '-delete-confirm-label');
+  const deleteErrorEl = document.getElementById(id + '-delete-error');
+
+  function openDeleteModal() {
+    const label = monthLabel(state.currentMonth);
+    document.getElementById(id + '-delete-step1-body').textContent =
+      `This will permanently remove ${label} (${state.items.length} item${state.items.length === 1 ? '' : 's'}) for ${kind === 'personal' ? 'Personal' : 'Shared'}. This can't be undone.`;
+    confirmLabelEl.textContent = label;
+    confirmInput.value = '';
+    deleteErrorEl.textContent = '';
+    confirmBtn.disabled = true;
+    step1.style.display = '';
+    step2.style.display = 'none';
+    deleteModal.classList.add('open');
+  }
+  function closeDeleteModal() { deleteModal.classList.remove('open'); }
+
+  document.getElementById(id + '-delete-month-btn').addEventListener('click', () => {
+    if (state.months.length <= 1) { alert('You need at least one month — add another before deleting this one.'); return; }
+    openDeleteModal();
+  });
+  document.getElementById(id + '-delete-cancel-1').addEventListener('click', closeDeleteModal);
+  document.getElementById(id + '-delete-cancel-2').addEventListener('click', closeDeleteModal);
+  deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) closeDeleteModal(); });
+
+  document.getElementById(id + '-delete-continue').addEventListener('click', () => {
+    step1.style.display = 'none';
+    step2.style.display = '';
+    confirmInput.focus();
+  });
+
+  confirmInput.addEventListener('input', () => {
+    const expected = monthLabel(state.currentMonth);
+    confirmBtn.disabled = confirmInput.value.trim() !== expected;
+    deleteErrorEl.textContent = '';
+  });
+
+  confirmBtn.addEventListener('click', async () => {
+    const expected = monthLabel(state.currentMonth);
+    if (confirmInput.value.trim() !== expected) {
+      deleteErrorEl.textContent = 'That doesn\u2019t match. Please type it exactly.';
+      return;
+    }
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Deleting…';
+    const keyToDelete = state.currentMonth;
+    try {
+      // Clear the month's data on the sheet (existing API only supports get/set,
+      // so "delete" means wiping this key's contents to an empty list).
+      await saveMonth(keyToDelete, []);
+      state.months = state.months.filter(m => m !== keyToDelete);
+      await saveMonthsList();
+      state.currentMonth = state.months[state.months.length - 1];
+      renderMonthSelect();
+      await switchToMonth(state.currentMonth);
+      closeDeleteModal();
+    } catch (e) {
+      deleteErrorEl.textContent = 'Could not delete — check your connection and try again.';
+    } finally {
+      confirmBtn.textContent = 'Delete month';
+      confirmBtn.disabled = false;
+    }
   });
 
   function nextMonthKey(key) {
