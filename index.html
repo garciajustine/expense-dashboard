@@ -238,7 +238,7 @@
   }
   .ledger-head {
     display: grid;
-    grid-template-columns: 22px 1fr 110px 120px 110px 32px;
+    grid-template-columns: 22px 1fr 110px 120px 110px 88px;
     gap: 10px;
     padding: 12px 18px;
     font-family: 'IBM Plex Mono', monospace;
@@ -250,7 +250,7 @@
   }
   .row {
     display: grid;
-    grid-template-columns: 22px 1fr 110px 120px 110px 32px;
+    grid-template-columns: 22px 1fr 110px 120px 110px 88px;
     gap: 10px;
     align-items: center;
     padding: 10px 18px;
@@ -437,6 +437,13 @@
     padding: 0;
   }
   .del-btn:hover { background: var(--red-dim); color: var(--red); }
+  .row-actions { display: flex; gap: 2px; justify-content: flex-end; }
+  .act-btn {
+    width: 26px; height: 26px; border-radius: 5px; border: none; background: transparent;
+    color: var(--text-faint); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+  }
+  .act-btn:hover { background: rgba(79,203,175,0.14); color: var(--teal); }
 
   .add-row { padding: 12px 18px; display: flex; }
   .add-row button { width: 100%; border-style: dashed; color: var(--text-dim); }
@@ -597,7 +604,7 @@
     .amount-cell, .paid-cell, .date-cell { justify-content: space-between; }
     .amount-cell::before { content: 'Amount'; color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; font-size: 10px; margin-right: auto; }
     .date-cell::before { content: 'Paid on'; color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
-    .del-btn { justify-self: end; }
+    .row-actions { justify-self: end; }
 
     .side-col { gap: 12px; }
     .cal-day { font-size: 12px; }
@@ -606,7 +613,7 @@
 
     /* Bigger touch targets so fingers can hit them reliably */
     .checkbox { width: 24px; height: 24px; }
-    .del-btn { width: 34px; height: 34px; }
+    .del-btn, .act-btn { width: 34px; height: 34px; }
     .drag-handle { width: 28px; height: 34px; }
     .date-picker-wrap { width: 24px; height: 24px; }
     button, select { min-height: 40px; }
@@ -885,7 +892,7 @@ function makeTracker(id, kind) {
   const LEGACY_MONTH_LIST_KEY = kind === 'personal' ? 'expense-months-list' : null;
   const legacyMonthKeyFn = (m) => 'expenses:' + m;
 
-  const state = { months: [], currentMonth: SEEDS[kind].month, items: [], idCounter: 1, selectedMoveId: null };
+  const state = { months: [], currentMonth: SEEDS[kind].month, items: [], idCounter: 1, selectedMoveId: null, loaded: false, loadFailed: false, monthsTrusted: false };
 
   function uid() { return id + '_' + (state.idCounter++) + '_' + Date.now().toString(36); }
 
@@ -931,18 +938,28 @@ function makeTracker(id, kind) {
     try { await storage.set(MONTH_LIST_KEY, JSON.stringify(state.months), false); } catch (e) {}
   }
 
-  async function loadMonth(key) {
-    try {
-      const res = await storage.get(monthKeyFn(key), false);
-      if (res && res.value) return JSON.parse(res.value).map(it => ({ ...it, id: it.id || uid() }));
-    } catch (e) {}
-    if (LEGACY_MONTH_LIST_KEY) {
+  // ok:false = never got a confirmed answer from the server (do NOT treat as "no data").
+  async function fetchMonth(key) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const res = await storage.get(legacyMonthKeyFn(key), false);
-        if (res && res.value) return JSON.parse(res.value).map(it => ({ ...it, id: it.id || uid() }));
-      } catch (e) {}
+        let res = await storage.get(monthKeyFn(key), false);
+        if (!(res && res.value) && LEGACY_MONTH_LIST_KEY) res = await storage.get(legacyMonthKeyFn(key), false);
+        const items = (res && res.value) ? JSON.parse(res.value).map(it => ({ ...it, id: it.id || uid() })) : null;
+        return { ok: true, items };
+      } catch (e) {
+        if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
+      }
     }
-    return null;
+    return { ok: false, items: null };
+  }
+  async function loadMonth(key) { return (await fetchMonth(key)).items; }
+
+  // Editing is only allowed once this month was really loaded (or the user explicitly starts it).
+  function ensureLoaded() {
+    if (state.loaded) return true;
+    if (state.loadFailed) { alert('Could not load this month from your sheet, so editing is paused to protect your data. Tap Sync to retry.'); return false; }
+    if (confirm('No saved data was found for this month. If you expect data here, tap Sync first. Start it fresh?')) { state.loaded = true; return true; }
+    return false;
   }
 
   async function saveMonth(key, data) {
@@ -1153,9 +1170,13 @@ function makeTracker(id, kind) {
         <div class="date-cell ${item.paidDate ? '' : 'empty'}">
           <input type="text" value="${escapeAttr(item.paidDate || '')}" data-field="paidDate" placeholder="—" />
         </div>
+        <div class="row-actions">
+        <button class="act-btn" data-act="copy" aria-label="Copy expense name" title="Copy name"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+        <button class="act-btn" data-act="dup" aria-label="Duplicate row" title="Duplicate row"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg></button>
         <button class="del-btn" data-field="delete" aria-label="Delete expense" title="Delete">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
         </button>
+        </div>
       `;
       container.appendChild(row);
     });
@@ -1217,7 +1238,23 @@ function makeTracker(id, kind) {
     persist();
   });
 
-  async function persist() { await saveMonth(state.currentMonth, state.items); }
+  const pendingSaves = {}; let saveRunning = false;
+  async function persist() {
+    if (!state.loaded) {
+      document.getElementById(id + '-save-note').textContent = 'Not saved — this month has not loaded. Tap Sync.';
+      return;
+    }
+    pendingSaves[state.currentMonth] = state.items; // latest wins
+    if (saveRunning) return;
+    saveRunning = true;
+    try {
+      while (Object.keys(pendingSaves).length) {
+        const k = Object.keys(pendingSaves)[0];
+        const data = pendingSaves[k]; delete pendingSaves[k];
+        await saveMonth(k, data);
+      }
+    } finally { saveRunning = false; }
+  }
 
 
   document.getElementById(id + '-rows').addEventListener('input', (e) => {
@@ -1248,6 +1285,25 @@ function makeTracker(id, kind) {
     const checkbox = e.target.closest('.checkbox');
     const delBtn = e.target.closest('.del-btn');
     const instToggle = e.target.closest('.inst-toggle');
+    const actBtn = e.target.closest('.act-btn');
+    if (actBtn) {
+      const item = getItem(actBtn.closest('.row').dataset.id);
+      if (!item) return;
+      if (actBtn.dataset.act === 'copy') {
+        const note = document.getElementById(id + '-save-note');
+        const done = () => { const prev = note.textContent; note.textContent = 'Copied \u201c' + (item.name || '') + '\u201d'; setTimeout(() => { note.textContent = prev; }, 1500); };
+        try { navigator.clipboard.writeText(item.name || '').then(done).catch(() => {}); } catch (err) {}
+        return;
+      }
+      if (!ensureLoaded()) return;
+      const idx = state.items.findIndex(i => i.id === item.id);
+      state.items.splice(idx + 1, 0, { ...item, id: uid(), paid: false, paidDate: '' });
+      renderRows(); renderStats(); renderInstallments(); renderCalendar();
+      const inputs = document.querySelectorAll('#' + id + '-rows .name-cell > input[data-field="name"]');
+      if (inputs[idx + 1]) { inputs[idx + 1].focus(); inputs[idx + 1].select(); }
+      persist();
+      return;
+    }
     if (checkbox) {
       const row = checkbox.closest('.row');
       const item = getItem(row.dataset.id);
@@ -1282,6 +1338,7 @@ function makeTracker(id, kind) {
   });
 
   document.getElementById(id + '-add-expense-btn').addEventListener('click', () => {
+    if (!ensureLoaded()) return;
     state.items.push({ id: uid(), name: '', amount: 0, due: '', dueDate: '', paid: false, paidDate: '', isInstallment: false, instPaid: 0, instTotal: null });
     renderRows();
     renderStats();
@@ -1302,6 +1359,14 @@ function makeTracker(id, kind) {
     if (!label) return;
     const key = label.trim();
     if (!/^\d{4}-\d{2}$/.test(key)) { alert('Please use YYYY-MM format, e.g. 2026-08'); return; }
+    if (!state.monthsTrusted) {
+      // Never overwrite the saved months list from an unconfirmed/offline view.
+      const r = await loadMonthsList();
+      if (r.ok && r.months && r.months.length) { state.months = r.months; state.monthsTrusted = true; }
+      else if (!(r.ok && confirm('No saved months were found on your sheet. Only continue if this is a brand-new sheet.'))) {
+        alert('Could not confirm your saved months. Tap Sync and try again.'); return;
+      } else { state.monthsTrusted = true; }
+    }
     if (!state.months.includes(key)) {
       state.months.push(key);
       state.months.sort();
@@ -1313,11 +1378,14 @@ function makeTracker(id, kind) {
   });
 
   document.getElementById(id + '-dup-btn').addEventListener('click', async () => {
+    if (state.loadFailed) { alert('Could not load this month, so copying is paused. Tap Sync to retry.'); return; }
     const idx = state.months.indexOf(state.currentMonth);
     const prevKey = idx > 0 ? state.months[idx - 1] : null;
     if (!prevKey) { alert('No earlier month to copy from.'); return; }
     const prevItems = await loadMonth(prevKey);
     if (!prevItems || !prevItems.length) { alert('That month has no items to copy.'); return; }
+    if (state.loaded && state.items.length && !confirm('Replace this month\u2019s ' + state.items.length + ' items with a copy of the previous month?')) return;
+    state.loaded = true;
     state.items = prevItems.map(it => ({ ...it, id: uid(), paid: false, paidDate: '' }));
     state.selectedMoveId = null;
     renderRows();
@@ -1339,6 +1407,7 @@ function makeTracker(id, kind) {
       const { months: freshMonths, ok } = await loadMonthsList();
       if (ok && freshMonths && freshMonths.length) {
         state.months = freshMonths;
+        state.monthsTrusted = true;
         if (!state.months.includes(state.currentMonth)) {
           state.currentMonth = state.months[state.months.length - 1];
         }
@@ -1435,14 +1504,15 @@ function makeTracker(id, kind) {
   }
 
   async function switchToMonth(key, isNew) {
-    let data = await loadMonth(key);
+    state.loaded = false; // lock edits while loading so old rows can never be saved under the new month
+    const { ok, items } = await fetchMonth(key);
+    if (key !== state.currentMonth) return; // user already moved on
+    state.loadFailed = !ok;
+    state.loaded = !!items || (!!isNew && ok);
+    let data = items;
     if (!data) {
-      if (key === SEEDS[kind].month && !isNew) {
-        data = SEEDS[kind].items.map(it => ({ ...it, id: uid() }));
-        await saveMonth(key, data);
-      } else {
-        data = [];
-      }
+      // Seed rows are display-only; never auto-saved.
+      data = (key === SEEDS[kind].month && !isNew && ok) ? SEEDS[kind].items.map(it => ({ ...it, id: uid() })) : [];
     }
     state.items = data;
     state.selectedMoveId = null;
@@ -1450,6 +1520,11 @@ function makeTracker(id, kind) {
     renderStats();
     renderInstallments();
     renderCalendar();
+    if (!state.loaded) {
+      document.getElementById(id + '-save-note').textContent = ok
+        ? 'No saved data found for this month — editing paused. Tap Sync to retry.'
+        : 'Could not load this month — editing paused. Tap Sync to retry.';
+    }
   }
 
   async function init() {
@@ -1458,6 +1533,7 @@ function makeTracker(id, kind) {
     if (storedMonths && storedMonths.length) {
       // Got a real, non-empty list back from the server — trust it fully.
       state.months = storedMonths;
+      state.monthsTrusted = true;
       if (!state.months.includes(SEEDS[kind].month)) {
         state.months.push(SEEDS[kind].month);
         state.months.sort();
