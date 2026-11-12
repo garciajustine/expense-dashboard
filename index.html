@@ -1812,6 +1812,16 @@ function makeTracker(id, kind) {
     }).join('');
   }
 
+  // A due date is really "this day of the month": move it into the month being viewed (31st -> last day of shorter months)
+  function shiftToMonth(dateStr, monthKey) {
+    const parts = (dateStr || '').split('-');
+    if (parts.length !== 3 || !/^\d{4}-\d{2}$/.test(monthKey || '')) return dateStr;
+    if (`${parts[0]}-${parts[1]}` === monthKey) return dateStr;
+    const [y, m] = monthKey.split('-').map(Number);
+    const day = Math.min(parseInt(parts[2], 10) || 1, new Date(y, m, 0).getDate());
+    return monthKey + '-' + String(day).padStart(2, '0');
+  }
+
   function dayOfMonth(dateStr) {
     if (!dateStr) return null;
     const parts = dateStr.split('-');
@@ -2179,7 +2189,7 @@ function makeTracker(id, kind) {
     if (!prevItems || !prevItems.length) { alert('That month has no items to copy.'); return; }
     if (state.loaded && state.items.length && !confirm('Replace this month\u2019s ' + state.items.length + ' items with a copy of the previous month?')) return;
     state.loaded = true;
-    state.items = prevItems.map(it => ({ ...it, id: uid(), paid: false, paidDate: '' }));
+    state.items = prevItems.map(it => ({ ...it, id: uid(), paid: false, paidDate: '', dueDate: it.dueDate ? shiftToMonth(it.dueDate, state.currentMonth) : '' }));
     state.selectedMoveId = null;
     renderRows();
     renderStats();
@@ -2307,7 +2317,7 @@ function makeTracker(id, kind) {
       // Seed rows are display-only; never auto-saved.
       data = (key === SEEDS[kind].month && !isNew && ok) ? SEEDS[kind].items.map(it => ({ ...it, id: uid() })) : [];
     }
-    state.items = data;
+    state.items = data.map(it => it.dueDate ? { ...it, dueDate: shiftToMonth(it.dueDate, key) } : it);
     state.selectedMoveId = null;
     renderRows();
     renderStats();
