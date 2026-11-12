@@ -1387,6 +1387,22 @@
     html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar .month-controls select { flex: 1 1 100%; }
     html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar .wl-filter button { padding-left: 6px; padding-right: 6px; }
   }
+
+  /* ================= ARSENAL 26/27 home: white-dominant page ================= */
+  html[data-theme="arsenal27"] body[data-tab="personal"] {
+    --bg:#F6F6F7; --panel:#FFFFFF; --panel-2:#F4F4F5; --line:#E2E2E5; --line-soft:#EDEDEF;
+    --text:#17171A; --text-dim:#5B5B63; --text-faint:#9C9CA4;
+    --gold:#E11B22; --gold-dim:#FCE3E3; --teal:#7A0B1A; --teal-dim:#F5DEE1; --red:#C8102E; --red-dim:#FBE0E3; --violet:#7A0B1A; --violet-dim:#F5DEE1;
+    --on-accent:#FFFFFF; color-scheme: light;
+  }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .stat, html[data-theme="arsenal27"] body[data-tab="personal"] .side-card, html[data-theme="arsenal27"] body[data-tab="personal"] .ledger { box-shadow: 0 1px 2px rgba(23,23,26,.04), 0 6px 18px rgba(23,23,26,.05); }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .stat { border-top-color: #E11B22 !important; }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .topbar { box-shadow: 0 10px 28px rgba(200,16,46,.18); }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .checkbox.checked svg { stroke: #FFFFFF; }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .row.is-paid { background: rgba(122,11,26,.05); }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .row-menu .due-item input[type="date"] { color-scheme: light; }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .row-menu { box-shadow: 0 14px 34px rgba(23,23,26,.14); }
+  html[data-theme="arsenal27"] body[data-tab="personal"] .tab-btn:not(.active) { background: #FFFFFF; }
 </style>
 </head>
 <body data-tab="personal">
