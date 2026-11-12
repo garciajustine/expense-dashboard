@@ -14,7 +14,7 @@
   (function(){ try { var t = localStorage.getItem('expense-theme'); if (t && t !== 'default') document.documentElement.dataset.theme = t; } catch (e) {} })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #14171C;
@@ -1403,6 +1403,14 @@
   html[data-theme="arsenal27"] body[data-tab="personal"] .row-menu .due-item input[type="date"] { color-scheme: light; }
   html[data-theme="arsenal27"] body[data-tab="personal"] .row-menu { box-shadow: 0 14px 34px rgba(23,23,26,.14); }
   html[data-theme="arsenal27"] body[data-tab="personal"] .tab-btn:not(.active) { background: #FFFFFF; }
+  /* ===== Expense name: slightly different shade, follows the theme ===== */
+  .row, .wl-item { --name-accent: var(--gold); }
+  #tab-shared .row { --name-accent: var(--violet); }
+  .wl-item { --name-accent: var(--teal); }
+  .name-cell > input[data-field="name"], .wl-name {
+    color: color-mix(in srgb, var(--name-accent) 55%, var(--text)) !important;
+    font-weight: 700;
+  }
 </style>
 </head>
 <body data-tab="personal">
