@@ -1042,11 +1042,14 @@
     .stat-value { font-size: 19px !important; }
     .stat-sub { font-size: 11.5px; }
     .name-cell > input { font-size: 17px !important; }
-    .row { grid-template-columns: 30px minmax(0,1fr) auto auto;
-      grid-template-areas: "chk name name name" "chk due due amt" "chk inst paid act" "chk instf instf instf"; row-gap: 3px; }
+    .row { grid-template-columns: 30px minmax(0,1fr) auto;
+      grid-template-areas: "chk name name" "chk due amt" "chk inst act" "chk instf instf" "chk paid paid"; row-gap: 3px; }
     .amount-cell { align-self: center; }
-    .date-cell { justify-self: end; }
-    .date-cell input { width: 112px !important; }
+    .inst-toggle { align-self: center; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    /* paid date: its own short line at the bottom, e.g. "Paid  Nov 2, 2026" */
+    .date-cell { justify-self: start; display: flex; align-items: center; gap: 6px; padding: 2px 4px 0; }
+    .date-cell::before { content: 'Paid' !important; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); opacity: .8; }
+    .date-cell input { width: 150px !important; text-align: left !important; }
     .due-tag input[type="text"] { font-size: 14.5px !important; }
     .inst-toggle { font-size: 12.5px; white-space: nowrap; }
     .inst-row-fields, .inst-row-fields input { font-size: 14px !important; }
@@ -1116,7 +1119,71 @@
     .row-actions { gap: 2px; }
     .row-actions .act-btn, .row-actions .del-btn { width: 38px; height: 38px; min-height: 0; border-radius: 9px; }
     .row-actions svg { width: 18px; height: 18px; }
-    .date-cell input { width: 96px !important; font-size: 12px !important; }
+    .date-cell input { font-size: 13px !important; }
+  }
+
+  /* ================= ROW "⋯" MENU ================= */
+  .due-chip { flex-shrink: 0; font-family: inherit; font-size: inherit; color: var(--gold); white-space: nowrap; }
+  #tab-shared .due-chip { color: var(--violet); }
+  .due-chip:empty { display: none; }
+  .row-actions { display: flex; justify-content: flex-end; align-items: center; position: relative; }
+  .more-btn { width: 32px; height: 32px; padding: 0; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center; min-height: 0; }
+  .more-btn svg { width: 18px; height: 18px; }
+  .more-btn:hover, .row-actions.open .more-btn { background: var(--panel-2); border-color: var(--line); color: var(--text); }
+  .row-menu { display: none; position: fixed; z-index: 1000; min-width: 220px; padding: 6px; border-radius: 12px;
+    background-color: var(--bg); background-image: linear-gradient(var(--panel), var(--panel)); border: 1px solid var(--line);
+    box-shadow: 0 14px 34px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.15); }
+  .row-actions.open .row-menu { display: block; animation: menuIn .12s ease-out; }
+  .row-actions.open { z-index: 1000; }
+  /* a blur/transform on the list would trap the fixed-position menu inside it */
+  html[data-theme] .ledger { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; transform: none; filter: none; }
+  html[data-theme="kh"] .ledger { background-color: rgba(14,16,48,.92); }
+  html[data-theme="kh"] body[data-tab="shared"] .ledger { background-color: rgba(38,14,48,.92); }
+  @keyframes menuIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .row-menu .menu-item { display: flex !important; align-items: center; justify-content: flex-start !important; gap: 10px; width: 100% !important; height: auto !important;
+    min-height: 40px; padding: 8px 10px; border: none; border-radius: 8px; background: transparent; color: var(--text); font-family: inherit; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; }
+  .row-menu .menu-item svg { width: 17px !important; height: 17px !important; flex-shrink: 0; color: var(--text-dim); }
+  .row-menu .menu-item:hover { background: var(--panel-2); }
+  .row-menu .menu-item.danger, .row-menu .menu-item.danger svg { color: var(--red); }
+  .row-menu .menu-item.danger:hover { background: var(--red-dim); }
+  .row-menu .menu-sep { height: 1px; background: var(--line-soft); margin: 4px 6px; }
+  .row-menu .due-item span { flex: 1; }
+  .row-menu .due-item input[type="date"] { width: 132px; flex-shrink: 0; background: var(--panel-2); border: 1px solid var(--line); border-radius: 7px; color: var(--text);
+    font-family: inherit; font-size: 13px; padding: 5px 6px; color-scheme: dark; min-height: 0; }
+  html[data-theme="arsenal"] body[data-tab="wishlist"] .row-menu .due-item input[type="date"], html[data-theme="pokopia"] .row-menu .due-item input[type="date"] { color-scheme: light; }
+  .row-menu .due-item input[type="date"]:focus { outline: none; border-color: var(--gold); }
+
+  /* actions column is now one small button */
+  .ledger-head, .row { grid-template-columns: 22px minmax(0,1fr) 110px 120px 110px 44px; }
+  @media (min-width: 641px) and (max-width: 1024px) { .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 112px 104px 108px 44px; } .more-btn { width: 38px; height: 38px; } }
+  @media (min-width: 901px) and (max-width: 1024px) { .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 104px 96px 100px 44px; } }
+  @media (pointer: coarse) and (min-width: 1025px) { .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 108px 110px 110px 44px; } .more-btn { width: 38px; height: 38px; } .row-menu .menu-item { min-height: 46px; font-size: 15px; } }
+  @media (pointer: coarse) { .row-menu .menu-item { min-height: 46px; font-size: 15px; } .row-menu .due-item input[type="date"] { font-size: 16px; } }
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 30px minmax(0,1fr) auto !important;
+      grid-template-areas: "chk name act" "chk due amt" "chk inst inst" "chk instf instf" "chk paid paid" !important; }
+    .row-actions { grid-area: act; align-self: center; }
+    .more-btn { width: 38px; height: 38px; }
+    .due-tag { display: flex; align-items: center; gap: 8px; }
+    .due-chip { font-size: 13px; }
+    .row-menu { min-width: 240px; }
+  }
+
+  /* ================= MONEY BOXES (room for 123,456.78) ================= */
+  .amount-cell input { font-variant-numeric: tabular-nums; }
+  .wl-price input { width: 112px; font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) {
+    .amount-cell input { width: 124px !important; }
+    .wl-price input { width: 112px !important; }
+    .wl-item { grid-template-columns: 24px minmax(0,1fr) auto 34px !important; }
+  }
+  @media (max-width: 360px) { .amount-cell input { width: 108px !important; } }
+  @media (max-width: 640px) {
+    /* name runs over the amount column; only the ⋯ button sits beside it */
+    .row { grid-template-columns: 30px minmax(0,1fr) auto 40px !important;
+      grid-template-areas: "chk name name act" "chk due amt amt" "chk inst inst inst" "chk instf instf instf" "chk paid paid paid" !important; }
+    .row-actions { justify-self: end; }
   }
 </style>
 </head>
@@ -1635,10 +1702,7 @@ function makeTracker(id, kind) {
           <input type="text" value="${escapeAttr(item.name)}" data-field="name" placeholder="Expense name" />
           <div class="due-tag">
             <input type="text" value="${escapeAttr(item.due || '')}" data-field="due" placeholder="Notes" />
-            <div class="date-picker-wrap ${item.dueDate ? 'has-date' : ''}" title="${item.dueDate ? formatDueDate(item.dueDate) : 'Set due date'}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
-              <input type="date" value="${escapeAttr(item.dueDate || '')}" data-field="dueDate" title="Payment due date" />
-            </div>
+            <span class="due-chip">${item.dueDate ? 'Due ' + formatDueDate(item.dueDate).replace(/,\s*\d{4}$/, '') : ''}</span>
           </div>
           <div class="inst-toggle ${item.isInstallment ? 'on' : ''}" data-field="instToggle">${item.isInstallment ? '&#10003; Installment' : '+ Installment'}</div>
           ${item.isInstallment ? `
@@ -1651,7 +1715,7 @@ function makeTracker(id, kind) {
         </div>
         <div class="amount-cell">
           <span>&#8369;</span>
-          <input type="number" step="0.01" value="${item.amount}" data-field="amount" />
+          <input type="text" inputmode="decimal" autocomplete="off" value="${fmtMoney(item.amount)}" data-field="amount" aria-label="Amount" />
         </div>
         <div class="paid-cell">
           <div class="checkbox ${item.paid ? 'checked' : ''}" data-field="paid">
@@ -1663,11 +1727,20 @@ function makeTracker(id, kind) {
           <input type="text" value="${escapeAttr(item.paidDate || '')}" data-field="paidDate" placeholder="—" />
         </div>
         <div class="row-actions">
-        <button class="act-btn" data-act="copy" aria-label="Copy expense name" title="Copy name"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
-        <button class="act-btn" data-act="dup" aria-label="Duplicate row" title="Duplicate row"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg></button>
-        <button class="del-btn" data-field="delete" aria-label="Delete expense" title="Delete">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
-        </button>
+          <button class="more-btn" data-menu aria-label="More options" aria-haspopup="menu" aria-expanded="false" title="More">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          </button>
+          <div class="row-menu" role="menu">
+            <label class="menu-item due-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
+              <span>Due date</span>
+              <input type="date" value="${escapeAttr(item.dueDate || '')}" data-field="dueDate" aria-label="Payment due date" />
+            </label>
+            <button class="menu-item act-btn" data-act="copy" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copy name</span></button>
+            <button class="menu-item act-btn" data-act="dup" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><span>Duplicate</span></button>
+            <div class="menu-sep"></div>
+            <button class="menu-item del-btn danger" data-field="delete" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg><span>Delete</span></button>
+          </div>
         </div>
       `;
       container.appendChild(row);
@@ -1755,11 +1828,14 @@ function makeTracker(id, kind) {
     const row = e.target.closest('.row');
     const item = getItem(row.dataset.id);
     if (!item) return;
-    if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
+    if (field === 'amount') item.amount = liveMoney(e.target);
     else if (field === 'instPaid') item.instPaid = parseInt(e.target.value, 10) || 0;
     else if (field === 'instTotal') item.instTotal = e.target.value === '' ? null : (parseInt(e.target.value, 10) || 0);
     else if (field === 'dueDate') {
       item.dueDate = e.target.value;
+      const chip = row.querySelector('.due-chip');
+      if (chip) chip.textContent = item.dueDate ? 'Due ' + formatDueDate(item.dueDate).replace(/,\s*\d{4}$/, '') : '';
+      if (typeof closeRowMenus === 'function') closeRowMenus();
       const wrap = e.target.closest('.date-picker-wrap');
       if (wrap) {
         wrap.classList.toggle('has-date', !!item.dueDate);
@@ -1771,6 +1847,12 @@ function makeTracker(id, kind) {
     renderInstallments();
     renderCalendar();
     persist();
+  });
+
+  document.getElementById(id + '-rows').addEventListener('focusout', (e) => {
+    if (e.target.dataset.field !== 'amount') return;
+    const row = e.target.closest('.row'); const item = row && getItem(row.dataset.id);
+    if (item) e.target.value = fmtMoney(item.amount);
   });
 
   document.getElementById(id + '-rows').addEventListener('click', (e) => {
@@ -2087,7 +2169,7 @@ function makeWishlist() {
       </div>
       <form class="wl-add" id="wl-add" autocomplete="off">
         <input class="wl-field wl-name-in" id="wl-in-name" placeholder="What is it? e.g. New running shoes" maxlength="120" />
-        <input class="wl-field mono wl-price-in" id="wl-in-price" placeholder="&#8369; 0" inputmode="decimal" />
+        <input class="wl-field mono wl-price-in" id="wl-in-price" placeholder="&#8369; 0.00" inputmode="decimal" autocomplete="off" />
         <div class="wl-seg" id="wl-in-type"><button type="button" data-v="need" class="on">Need</button><button type="button" data-v="want">Want</button></div>
         <div class="wl-seg" id="wl-in-prio"><button type="button" data-v="high">High</button><button type="button" data-v="med" class="on">Med</button><button type="button" data-v="low">Low</button></div>
         <button type="submit" class="wl-add-btn">+ Add</button>
@@ -2191,7 +2273,7 @@ function makeWishlist() {
           <input class="wl-note" data-field="note" value="${esc(it.note)}" placeholder="+ note" aria-label="Note" />
         </div>
       </div>
-      <div class="wl-price"><span>&#8369;</span><input data-field="price" inputmode="decimal" value="${it.price ? it.price.toLocaleString('en-PH', { maximumFractionDigits: 2 }) : ''}" placeholder="0" aria-label="Price" /></div>
+      <div class="wl-price"><span>&#8369;</span><input data-field="price" inputmode="decimal" value="${it.price ? fmtMoney(it.price) : ''}" placeholder="0.00" autocomplete="off" aria-label="Price" /></div>
       <button class="wl-del" data-act="del" title="Delete" aria-label="Delete">&times;</button>
     </div>`;
   }
@@ -2238,6 +2320,7 @@ function makeWishlist() {
   function setSeg(sel, v) { root.querySelectorAll(sel + ' button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
   $('#wl-in-type').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.newType = b.dataset.v; setSeg('#wl-in-type', b.dataset.v); });
   $('#wl-in-prio').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.newPrio = b.dataset.v; setSeg('#wl-in-prio', b.dataset.v); });
+  $('#wl-in-price').addEventListener('input', e => liveMoney(e.target));
   $('#wl-add').addEventListener('submit', e => {
     e.preventDefault();
     const err = $('#wl-add-err');
@@ -2272,7 +2355,7 @@ function makeWishlist() {
     const f = e.target.dataset.field; if (!f) return;
     const it = getItem(e.target.closest('.wl-item').dataset.id); if (!it) return;
     if (!state.loaded) { e.target.value = it[f] || ''; canEdit(); return; }
-    if (f === 'price') it.price = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
+    if (f === 'price') it.price = liveMoney(e.target);
     else it[f] = e.target.value;
     renderStats(); renderSide(); persistSoon();
   });
@@ -2304,6 +2387,73 @@ function makeWishlist() {
     try { localStorage.setItem('expense-theme', t); } catch (e) {}
   });
 })();
+
+
+// ===== Row "⋯" menus =====
+function closeRowMenus() {
+  document.querySelectorAll('.row-actions.open').forEach(a => {
+    a.classList.remove('open');
+    const b = a.querySelector('.more-btn'); if (b) b.setAttribute('aria-expanded', 'false');
+  });
+}
+function openRowMenu(actions) {
+  closeRowMenus();
+  const btn = actions.querySelector('.more-btn'), menu = actions.querySelector('.row-menu');
+  actions.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+  const r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+  let top = r.bottom + 6; if (top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 6);
+  let left = Math.min(r.right - mw, window.innerWidth - mw - 8); left = Math.max(8, left);
+  menu.style.top = top + 'px'; menu.style.left = left + 'px';
+}
+document.addEventListener('click', (e) => {
+  const more = e.target.closest('.more-btn');
+  if (more) { const a = more.closest('.row-actions'); a.classList.contains('open') ? closeRowMenus() : openRowMenu(a); return; }
+  if (e.target.closest('.row-menu .due-item')) return;           // leave open while picking a date
+  if (e.target.closest('.row-menu .menu-item')) { setTimeout(closeRowMenus, 0); return; }
+  if (!e.target.closest('.row-menu')) closeRowMenus();
+}, true);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRowMenus(); });
+window.addEventListener('resize', closeRowMenus);
+document.addEventListener('scroll', (e) => { if (!(e.target.closest && e.target.closest('.row-menu'))) closeRowMenus(); }, true);
+
+
+// ===== Shrink big totals so they fit their tile (phones) =====
+function fitStatValues() {
+  document.querySelectorAll('.stat-value').forEach(el => {
+    el.style.removeProperty('font-size');
+    if (!el.offsetParent || el.scrollWidth <= el.clientWidth) return;
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth && fs > 11) { fs -= 0.5; el.style.setProperty('font-size', fs + 'px', 'important'); }
+  });
+}
+new MutationObserver(() => requestAnimationFrame(fitStatValues)).observe(document.body, { subtree: true, characterData: true, childList: true });
+window.addEventListener('resize', fitStatValues);
+if (document.fonts) { document.fonts.ready.then(fitStatValues); document.fonts.addEventListener('loadingdone', fitStatValues); }
+document.addEventListener('click', e => { if (e.target.closest('.tab-btn')) requestAnimationFrame(fitStatValues); });
+// ===== Money boxes: "12,345.67" — commas while typing, max 2 decimals =====
+function fmtMoney(n) {
+  return (Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+// Re-formats the box in place (keeping the cursor where it was) and returns the number.
+function liveMoney(input) {
+  const old = input.value;
+  const caret = input.selectionStart == null ? old.length : input.selectionStart;
+  const keepBefore = old.slice(0, caret).replace(/[^0-9.]/g, '').length;
+  let raw = old.replace(/[^0-9.]/g, '');
+  const dot = raw.indexOf('.');
+  if (dot !== -1) raw = raw.slice(0, dot + 1) + raw.slice(dot + 1).replace(/\./g, '').slice(0, 2);
+  let [intPart, dec] = raw.split('.');
+  intPart = (intPart || '').replace(/^0+(?=\d)/, '');
+  const intOut = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : (dec !== undefined ? '0' : '');
+  const out = intOut + (dec !== undefined ? '.' + dec : '');
+  if (out !== old) {
+    input.value = out;
+    let seen = 0, pos = 0;
+    while (pos < out.length && seen < keepBefore) { if (/[0-9.]/.test(out[pos])) seen++; pos++; }
+    try { input.setSelectionRange(pos, pos); } catch (e) {}
+  }
+  return parseFloat(raw) || 0;
+}
 
 function startApp() {
   makeTracker('personal', 'personal');
