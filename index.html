@@ -1411,6 +1411,9 @@
     color: color-mix(in srgb, var(--name-accent) 55%, var(--text)) !important;
     font-weight: 700;
   }
+
+  /* very small phones: keep the three total labels on one line */
+  @media (max-width: 380px) { .stats .stat-label { letter-spacing: .02em !important; font-size: 10px !important; } }
 </style>
 </head>
 <body data-tab="personal">
@@ -1490,7 +1493,7 @@ const PANEL_TEMPLATE = (id, kind) => `
           <div class="progress-track"><div class="progress-fill" id="${id}-progress-fill" style="width:0%"></div></div>
         </div>
         <div class="stat remaining">
-          <p class="stat-label">Still owed</p>
+          <p class="stat-label">Left to pay</p>
           <p class="stat-value ${kind === 'personal' ? 'g' : 'v'}" id="${id}-stat-remaining">&#8369;0</p>
           <p class="stat-sub" id="${id}-stat-pct">0% paid</p>
         </div>
