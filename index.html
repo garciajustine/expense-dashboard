@@ -1312,12 +1312,14 @@
   .sound-toggle.muted .off { display: inline; }
   .sound-toggle.muted { opacity: .6; }
   html[data-theme="kh"] .sound-toggle { display: inline-flex; border: 1px solid rgba(243,210,122,.45); background: rgba(0,0,0,.25); }
+  html[data-theme="ff"] .sound-toggle { display: inline-flex; background: var(--win); border: 2px solid var(--win-edge); border-radius: 6px; }
+  html[data-theme="ff"] .sound-toggle + .theme-pick { margin-left: 8px; }
   html[data-theme="kh"] .sound-toggle + .theme-pick { margin-left: 8px; }
   @media (max-width: 640px) {
-    html[data-theme="kh"] .tabs .tab-btn { flex: 1 1 28%; }
-    html[data-theme="kh"] .sound-toggle { order: 2; width: 40px; height: 36px; margin-left: 0; flex: 0 0 40px; }
-    html[data-theme="kh"] .theme-pick { order: 1; width: auto; flex: 1 1 calc(100% - 46px); margin-left: 0 !important; }
-    html[data-theme="kh"] .tabs { row-gap: 6px; }
+    html:is([data-theme="kh"],[data-theme="ff"]) .tabs .tab-btn { flex: 1 1 28%; }
+    html:is([data-theme="kh"],[data-theme="ff"]) .sound-toggle { order: 2; width: 40px; height: 36px; margin-left: 0; flex: 0 0 40px; }
+    html:is([data-theme="kh"],[data-theme="ff"]) .theme-pick { order: 1; width: auto; flex: 1 1 calc(100% - 46px); margin-left: 0 !important; }
+    html:is([data-theme="kh"],[data-theme="ff"]) .tabs { row-gap: 6px; }
   }
 </style>
 </head>
@@ -2593,26 +2595,29 @@ function liveMoney(input) {
 }
 
 
-// ===== Kingdom Hearts sound effects (only while the KH theme is on) =====
+// ===== Theme sound effects (Kingdom Hearts + Final Fantasy only) =====
 (function khSounds() {
   const KEY = 'kh-sound';
   let enabled = true; try { enabled = localStorage.getItem(KEY) !== 'off'; } catch (e) {}
   const pools = {};
   function pool(name) {
-    if (!pools[name]) pools[name] = [0, 1, 2].map(() => { const a = new Audio('sounds/kh-' + name + '.mp3'); a.preload = 'auto'; a.volume = 0.6; return a; });
+    if (!pools[name]) pools[name] = [0, 1, 2].map(() => { const a = new Audio('sounds/' + name + '.mp3'); a.preload = 'auto'; a.volume = 0.6; return a; });
     return pools[name];
   }
-  const active = () => document.documentElement.dataset.theme === 'kh' && enabled;
+  // which file each theme uses; a theme without a 'save' sound uses its 'select' sound for confirmations too
+  const SOUNDS = { kh: { select: 'kh-select', save: 'kh-save' }, ff: { select: 'ff-select' } };
+  const themeSounds = () => SOUNDS[document.documentElement.dataset.theme];
+  const active = () => !!themeSounds() && enabled;
   let last = 0;
   function play(name) {
     if (!active()) return;
     const now = Date.now(); if (now - last < 60) return; last = now;      // ignore double-fires from one tap
-    const p = pool(name); const a = p.find(x => x.paused || x.ended) || p[0];
+    const set = themeSounds(); const p = pool(set[name] || set.select); const a = p.find(x => x.paused || x.ended) || p[0];
     try { a.currentTime = 0; const r = a.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
   }
   window.khPlay = play;
   // warm up once the theme is KH, so the first tap isn't silent
-  const warm = () => { if (document.documentElement.dataset.theme === 'kh') { pool('select'); pool('save'); } };
+  const warm = () => { const set = themeSounds(); if (set) Object.values(set).forEach(pool); };
   warm(); new MutationObserver(warm).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // "save" = confirming something
