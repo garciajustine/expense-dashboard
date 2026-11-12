@@ -994,6 +994,130 @@
     .stat-value { font-size: 14px !important; }
     .amount-cell input { width: 88px; }
   }
+
+  /* ================= LARGER TEXT: TABLET + PHONE ================= */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    h1 { font-size: 30px; }
+    .eyebrow { font-size: 12.5px; }
+    .tab-btn { font-size: 14px; }
+    .ledger-head { font-size: 12px; }
+    .name-cell input { font-size: 16px; }
+    .due-tag, .due-tag input[type="text"] { font-size: 12.5px; }
+    .inst-toggle { font-size: 11.5px; }
+    .inst-row-fields, .inst-row-fields input { font-size: 12.5px; }
+    .amount-cell input, .amount-cell span { font-size: 15px; }
+    .paid-label, .date-cell, .date-cell input { font-size: 13px; }
+    .stat-label { font-size: 12px; }
+    .stat-value { font-size: 26px; }
+    .stat-sub { font-size: 13px; }
+    .side-card-title { font-size: 12.5px; }
+    .inst-item-name { font-size: 15px; }
+    .inst-item-row { font-size: 12.5px; }
+    .inst-remaining, .inst-empty { font-size: 13.5px; }
+    .cal-title { font-size: 16px; }
+    .cal-dow { font-size: 11px; }
+    .cal-day { font-size: 13.5px; }
+    .cal-hint, .footer-note { font-size: 12px; }
+    select { font-size: 14px; }
+    .wl-name { font-size: 16px; }
+    .wl-note { font-size: 13.5px; }
+    .wl-price input, .wl-price span { font-size: 16px; }
+    .wl-pill, .wl-swap { font-size: 11.5px; }
+    .wl-group-title { font-size: 12.5px; }
+    .wl-group-title .tot { font-size: 13.5px; }
+    .wl-next { font-size: 15px; }
+    .wl-bar-label, .wl-hint { font-size: 12.5px; }
+    .wl-filter button, .wl-seg button { font-size: 13px; }
+    .wl-field { font-size: 15px; }
+  }
+  @media (max-width: 640px) {
+    h1 { font-size: 26px; }
+    .eyebrow { font-size: 11.5px; }
+    .tabs .tab-btn { font-size: 14px; min-height: 42px; }
+    .theme-pick select { font-size: 15px; }
+    .month-controls select { font-size: 16px; }
+    .month-controls .btn-ghost:not(.icon-btn) { font-size: 14px; }
+    .stat { padding: 11px 10px 12px; }
+    .stat-label { font-size: 10.5px; }
+    .stat-value { font-size: 19px !important; }
+    .stat-sub { font-size: 11.5px; }
+    .name-cell > input { font-size: 17px !important; }
+    .row { grid-template-columns: 30px minmax(0,1fr) auto auto;
+      grid-template-areas: "chk name name name" "chk due due amt" "chk inst paid act" "chk instf instf instf"; row-gap: 3px; }
+    .amount-cell { align-self: center; }
+    .date-cell { justify-self: end; }
+    .date-cell input { width: 112px !important; }
+    .due-tag input[type="text"] { font-size: 14.5px !important; }
+    .inst-toggle { font-size: 12.5px; white-space: nowrap; }
+    .inst-row-fields, .inst-row-fields input { font-size: 14px !important; }
+    .amount-cell span { font-size: 14px; }
+    .amount-cell input { font-size: 17px !important; width: 92px; }
+    .date-cell input { font-size: 13px !important; width: 130px; }
+    .footer-note { font-size: 12.5px; }
+    .footer-actions .btn-ghost { font-size: 14px; }
+    .add-row button { font-size: 15px; }
+    .side-card-title { font-size: 12.5px; }
+    .inst-item-name { font-size: 15.5px; }
+    .inst-item-row { font-size: 12.5px; }
+    .inst-remaining, .inst-empty { font-size: 13.5px; }
+    .cal-title { font-size: 17px; }
+    .cal-dow { font-size: 11px; }
+    .cal-day { font-size: 14.5px; }
+    .cal-hint { font-size: 12px; }
+    .wl-name { font-size: 17px !important; }
+    .wl-note { font-size: 14.5px !important; }
+    .wl-price span { font-size: 14px; }
+    .wl-price input { font-size: 17px !important; }
+    .wl-pill, .wl-swap { font-size: 11.5px; }
+    .wl-bought-on { font-size: 12px; }
+    .wl-group-title { font-size: 12.5px; }
+    .wl-group-title .tot { font-size: 13.5px; }
+    .wl-filter button { font-size: 13.5px; }
+    .wl-seg button { font-size: 13px; }
+    .wl-field { font-size: 16px !important; }
+    .wl-next { font-size: 15px; }
+    .wl-bar-label, .wl-hint { font-size: 12.5px; }
+    .wl-empty { font-size: 14px; }
+  }
+  @media (max-width: 360px) {
+    .stat-value { font-size: 16px !important; }
+    .amount-cell input { width: 84px; font-size: 16px !important; }
+  }
+
+  /* ===== Tap fixes: iOS draws <input type=date> wider than its box, so it covered the copy/duplicate buttons ===== */
+  .date-picker-wrap { overflow: hidden; isolation: isolate; }
+  .date-picker-wrap input[type="date"] { min-width: 0 !important; max-width: 100% !important; -webkit-appearance: none; appearance: none; font-size: 16px; }
+  .date-picker-wrap input[type="date"]::-webkit-date-and-time-value { min-width: 0; }
+  .row-actions { position: relative; z-index: 2; }
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .date-picker-wrap { width: 30px; height: 30px; }
+    .date-picker-wrap svg { width: 15px; height: 15px; }
+    .row-actions { gap: 4px; }
+    .row-actions .act-btn, .row-actions .del-btn { width: 36px; height: 36px; min-height: 0; border-radius: 8px; }
+    .row-actions svg { width: 17px; height: 17px; }
+    .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 108px 96px 100px 124px; }
+  }
+  @media (min-width: 901px) and (max-width: 1024px) {
+    .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 100px 92px 96px 120px; }
+  }
+  /* touchscreens wider than a tablet layout (e.g. iPad held sideways) */
+  @media (pointer: coarse) and (min-width: 1025px) {
+    .date-picker-wrap { width: 30px; height: 30px; }
+    .date-picker-wrap svg { width: 15px; height: 15px; }
+    .row-actions { gap: 4px; }
+    .row-actions .act-btn, .row-actions .del-btn { width: 36px; height: 36px; border-radius: 8px; }
+    .row-actions svg { width: 17px; height: 17px; }
+    .ledger-head, .row { grid-template-columns: 20px minmax(0,1fr) 104px 100px 104px 124px; }
+    .wl-del { width: 36px; height: 36px; }
+  }
+  @media (max-width: 640px) {
+    .date-picker-wrap { width: 30px; height: 30px; }
+    .date-picker-wrap svg { width: 16px; height: 16px; }
+    .row-actions { gap: 2px; }
+    .row-actions .act-btn, .row-actions .del-btn { width: 38px; height: 38px; min-height: 0; border-radius: 9px; }
+    .row-actions svg { width: 18px; height: 18px; }
+    .date-cell input { width: 96px !important; font-size: 12px !important; }
+  }
 </style>
 </head>
 <body data-tab="personal">
