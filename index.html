@@ -1321,6 +1321,72 @@
     html:is([data-theme="kh"],[data-theme="ff"]) .theme-pick { order: 1; width: auto; flex: 1 1 calc(100% - 46px); margin-left: 0 !important; }
     html:is([data-theme="kh"],[data-theme="ff"]) .tabs { row-gap: 6px; }
   }
+
+  /* ================= ARSENAL 25/26 (kit refresh) ================= */
+  /* Home: white-dominant page with Arsenal red; header = the kit's red "A" pattern with white sleeves */
+  html[data-theme="arsenal"] body[data-tab="personal"] {
+    --bg:#F6F6F7; --panel:#FFFFFF; --panel-2:#F4F4F5; --line:#E2E2E5; --line-soft:#EDEDEF;
+    --text:#17171A; --text-dim:#5B5B63; --text-faint:#9C9CA4;
+    --gold:#E3241D; --gold-dim:#FCE3E1; --teal:#9C824A; --teal-dim:#F2ECDF; --red:#C8102E; --red-dim:#FBE0E3; --violet:#9C824A; --violet-dim:#F2ECDF;
+    --on-accent:#FFFFFF; --hero-text:#FFFFFF; color-scheme: light;
+    --hero:
+      linear-gradient(#FFFFFF, #FFFFFF) left top / 100% 5px no-repeat,
+      linear-gradient(90deg, #FFFFFF 0 5px, #E3241D 5px 7px, #FFFFFF 7px 10px, #E3241D 10px 12px, #FFFFFF 12px 15px, #E3241D 15px 17px, #FFFFFF 17px 24px,
+        transparent 24px calc(100% - 24px),
+        #FFFFFF calc(100% - 24px) calc(100% - 17px), #E3241D calc(100% - 17px) calc(100% - 15px), #FFFFFF calc(100% - 15px) calc(100% - 12px), #E3241D calc(100% - 12px) calc(100% - 10px), #FFFFFF calc(100% - 10px) calc(100% - 7px), #E3241D calc(100% - 7px) calc(100% - 5px), #FFFFFF calc(100% - 5px)),
+      url("assets/arsenal-a.jpg") 0 0 / 196px 111px repeat,
+      #E9251F;
+  }
+  html[data-theme="arsenal"] body[data-tab="personal"] .topbar { padding-left: 44px; padding-right: 44px; box-shadow: 0 10px 28px rgba(200,16,46,.18); }
+  @media (max-width: 640px) { html[data-theme="arsenal"] body[data-tab="personal"] .topbar { padding-left: 32px; padding-right: 32px; background-size: 100% 5px, 100% 100%, 150px 85px, auto; } html[data-theme="arsenal"] body[data-tab="personal"] .month-controls { gap: 2px; } }
+  html[data-theme="arsenal"] body[data-tab="personal"] .topbar select { background: #B5150F; border-color: rgba(255,255,255,.45); color: #FFFFFF; }
+  html[data-theme="arsenal"] body[data-tab="personal"] .stat, html[data-theme="arsenal"] body[data-tab="personal"] .side-card, html[data-theme="arsenal"] body[data-tab="personal"] .ledger { box-shadow: 0 1px 2px rgba(23,23,26,.04), 0 6px 18px rgba(23,23,26,.05); }
+  html[data-theme="arsenal"] body[data-tab="personal"] .stat { border-top-color: #E3241D !important; }
+  html[data-theme="arsenal"] body[data-tab="personal"] .checkbox.checked svg { stroke: #FFFFFF; }
+  html[data-theme="arsenal"] body[data-tab="personal"] .row-menu .due-item input[type="date"] { color-scheme: light; }
+  html[data-theme="arsenal"] body[data-tab="personal"] .row-menu { box-shadow: 0 14px 34px rgba(23,23,26,.14); }
+  html[data-theme="arsenal"] body[data-tab="personal"] .tab-btn:not(.active) { background: #FFFFFF; }
+  html[data-theme="arsenal"] body[data-tab="personal"] .row.is-paid { background: rgba(156,130,74,.07); }
+  /* Away: navy with blue lightning zigzags, pink-red shoulder stripes, dark navy trim */
+  html[data-theme="arsenal"] body[data-tab="shared"] {
+    --bg:#060C22; --panel:#0E1B43; --panel-2:#14255A; --line:#253C7A; --line-soft:#1A2D63;
+    --text:#EEF3FF; --text-dim:#A9B8E0; --text-faint:#6779AC;
+    --gold:#E8395B; --gold-dim:#4A1830; --violet:#E8395B; --violet-dim:#4A1830; --teal:#6E9BFF; --teal-dim:#1B336E; --red:#FF7A8E; --red-dim:#4A1830;
+    --on-accent:#FFFFFF; --hero-text:#FFFFFF;
+    --hero:
+      linear-gradient(#0B1638, #0B1638) left bottom / 100% 7px no-repeat,
+      linear-gradient(180deg, #E8395B 0 3px, transparent 3px 7px, #E8395B 7px 10px, transparent 10px 14px, #E8395B 14px 17px, transparent 17px) left 0 / 100% 17px no-repeat,
+      linear-gradient(90deg, rgba(11,22,56,.78) 0, rgba(11,22,56,.35) 34%, rgba(11,22,56,0) 50%, rgba(11,22,56,.3) 66%, rgba(11,22,56,.72) 100%),
+      url("assets/arsenal-away.png") center 38% / 480px 525px repeat,
+      linear-gradient(180deg, #1A3275, #13265C);
+  }
+  html[data-theme="arsenal"] body[data-tab="shared"] .topbar { padding-top: 30px; }
+  @media (max-width: 640px) { html[data-theme="arsenal"] body[data-tab="shared"] .topbar { background-size: 100% 7px, 100% 17px, 100% 100%, 384px 420px, auto; } }
+  html[data-theme="arsenal"] body[data-tab="shared"] .topbar select { background: #0B1638; border-color: rgba(255,255,255,.3); color: #FFFFFF; }
+  html[data-theme="arsenal"] body[data-tab="shared"] .topbar .btn-ghost { color: #FFFFFF; }
+  html[data-theme="arsenal"] body[data-tab="shared"] .checkbox.checked svg { stroke: #0B1638; }
+  /* Third: cream with maroon + gold tipped stripes */
+  html[data-theme="arsenal"] body[data-tab="wishlist"] {
+    --bg:#F8F4EC; --panel:#FFFDF8; --panel-2:#F3ECDF; --line:#E4D8C5; --line-soft:#EEE6D8;
+    --text:#3B151C; --text-dim:#78575D; --text-faint:#B09A9E;
+    --gold:#B8923F; --gold-dim:#F3E8CF; --teal:#8B1A2B; --teal-dim:#F4DDE0; --red:#C0392B; --red-dim:#F8E0DC; --violet:#B8923F; --violet-dim:#F3E8CF;
+    --on-accent:#FFFFFF; --hero-text:#7E1626; color-scheme: light;
+    --hero:
+      linear-gradient(180deg, #8B1A2B 0 4px, #C9A253 4px 6px, #F6F1E7 6px 8px, #C9A253 8px 10px, #8B1A2B 10px 14px) left top / 100% 14px no-repeat,
+      linear-gradient(180deg, #8B1A2B 0 4px, #C9A253 4px 6px, #F6F1E7 6px 8px, #C9A253 8px 10px, #8B1A2B 10px 14px) left bottom / 100% 14px no-repeat,
+      repeating-linear-gradient(135deg, rgba(160,130,90,.07) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, #FBF8F1, #F3EDE1);
+  }
+  html[data-theme="arsenal"] body[data-tab="wishlist"] .topbar { padding-top: 30px; padding-bottom: 30px; }
+  html[data-theme="arsenal"] body[data-tab="wishlist"] .stat { border-top-color: #8B1A2B !important; }
+  html[data-theme="arsenal"] body[data-tab="wishlist"] .stat, html[data-theme="arsenal"] body[data-tab="wishlist"] .side-card, html[data-theme="arsenal"] body[data-tab="wishlist"] .wl-list, html[data-theme="arsenal"] body[data-tab="wishlist"] .wl-add { box-shadow: 0 4px 14px rgba(59,21,28,.06); }
+  /* very small phones (iPhone SE): let the header controls wrap instead of clipping */
+  @media (max-width: 380px) {
+    html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar { padding-left: 26px !important; padding-right: 26px !important; }
+    html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar .month-controls { flex-wrap: wrap; row-gap: 6px; }
+    html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar .month-controls select { flex: 1 1 100%; }
+    html:is([data-theme="arsenal"],[data-theme="arsenal27"]) .topbar .wl-filter button { padding-left: 6px; padding-right: 6px; }
+  }
 </style>
 </head>
 <body data-tab="personal">
