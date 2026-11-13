@@ -1316,10 +1316,10 @@
   html[data-theme="ff"] .sound-toggle + .theme-pick { margin-left: 8px; }
   html[data-theme="kh"] .sound-toggle + .theme-pick { margin-left: 8px; }
   @media (max-width: 640px) {
-    html:is([data-theme="kh"],[data-theme="ff"]) .tabs .tab-btn { flex: 1 1 28%; }
-    html:is([data-theme="kh"],[data-theme="ff"]) .sound-toggle { order: 2; width: 40px; height: 36px; margin-left: 0; flex: 0 0 40px; }
-    html:is([data-theme="kh"],[data-theme="ff"]) .theme-pick { order: 1; width: auto; flex: 1 1 calc(100% - 46px); margin-left: 0 !important; }
-    html:is([data-theme="kh"],[data-theme="ff"]) .tabs { row-gap: 6px; }
+    html:is([data-theme="kh"],[data-theme="ff"],[data-theme="zelda"]) .tabs .tab-btn { flex: 1 1 28%; }
+    html:is([data-theme="kh"],[data-theme="ff"],[data-theme="zelda"]) .sound-toggle { order: 2; width: 40px; height: 36px; margin-left: 0; flex: 0 0 40px; }
+    html:is([data-theme="kh"],[data-theme="ff"],[data-theme="zelda"]) .theme-pick { order: 1; width: auto; flex: 1 1 calc(100% - 46px); margin-left: 0 !important; }
+    html:is([data-theme="kh"],[data-theme="ff"],[data-theme="zelda"]) .tabs { row-gap: 6px; }
   }
 
   /* ================= ARSENAL 25/26 (kit refresh) ================= */
@@ -1414,6 +1414,109 @@
 
   /* very small phones: keep the three total labels on one line */
   @media (max-width: 380px) { .stats .stat-label { letter-spacing: .02em !important; font-size: 10px !important; } }
+
+  /* ================= ZELDA: BREATH OF THE WILD ================= */
+  html[data-theme="zelda"] body {
+    --sk:#7DEBF7; --sk-dim:rgba(125,235,247,.38); --slate:rgba(9,18,22,.86);
+    --panel:rgba(9,18,22,.86); --panel-2:rgba(255,255,255,.06); --line:rgba(125,235,247,.32); --line-soft:rgba(125,235,247,.16);
+    --text:#F1F5EF; --text-dim:#BCCBC3; --text-faint:#7F948B;
+    --gold:#7DEBF7; --gold-dim:rgba(125,235,247,.16); --teal:#9EE06A; --teal-dim:rgba(158,224,106,.18);
+    --red:#FF8A66; --red-dim:rgba(255,138,102,.18); --violet:#7DEBF7; --violet-dim:rgba(125,235,247,.16);
+    --on-accent:#08161B; --bezel:#9C7438; --bezel-dark:#3A2A18; color-scheme: dark;
+  }
+  /* Personal: Hyrule Field */
+  html[data-theme="zelda"] body[data-tab="personal"] { --bg:#5F8259;
+    --scene: radial-gradient(ellipse 55% 30% at 18% 88%, #4C7643 0, transparent 70%), radial-gradient(ellipse 70% 38% at 82% 96%, #3D6638 0, transparent 70%),
+      radial-gradient(ellipse 120% 45% at 50% 104%, #5A8650 0, transparent 70%), radial-gradient(ellipse 30% 12% at 70% 52%, rgba(255,255,255,.35), transparent 70%),
+      linear-gradient(180deg, #D3E6DC 0%, #AECBB7 34%, #84A77E 64%, #4D7347 100%); }
+  /* Shared: Sheikah runes */
+  html[data-theme="zelda"] body[data-tab="shared"] { --bg:#07111A; --violet:#FFB45C; --violet-dim:rgba(255,180,92,.16); --bezel:#B89A6A; --bezel-dark:#2B2116;
+    --scene: repeating-linear-gradient(0deg, rgba(125,235,247,.035) 0 1px, transparent 1px 30px), repeating-linear-gradient(90deg, rgba(125,235,247,.035) 0 1px, transparent 1px 30px),
+      radial-gradient(ellipse 80% 60% at 50% 0%, #14334D 0, #07111A 72%); }
+  /* Wishlist: Korok forest */
+  html[data-theme="zelda"] body[data-tab="wishlist"] { --bg:#0F2216; --teal:#A9E05A; --teal-dim:rgba(169,224,90,.18); --bezel:#6E8A3A; --bezel-dark:#23331A;
+    --scene: radial-gradient(ellipse 30% 22% at 12% 18%, rgba(125,190,80,.16), transparent 70%), radial-gradient(ellipse 34% 26% at 88% 30%, rgba(125,190,80,.12), transparent 70%),
+      radial-gradient(ellipse 40% 30% at 70% 88%, rgba(125,190,80,.13), transparent 70%), radial-gradient(ellipse 60% 40% at 30% 70%, rgba(255,240,170,.06), transparent 70%),
+      linear-gradient(180deg, #1B3D25 0%, #10261A 60%, #0B1B12 100%); }
+  html[data-theme="zelda"] body { background: var(--scene) !important; background-attachment: fixed !important; }
+  html[data-theme="zelda"] body::before { display: none !important; }
+
+  /* tabs: inventory tab row */
+  html[data-theme="zelda"] .tab-btn { font-family: 'Cinzel', serif !important; font-weight: 700; letter-spacing: .08em; text-transform: none; border-radius: 3px !important;
+    background: rgba(9,18,22,.78) !important; border: 1px solid var(--line) !important; color: var(--text-dim) !important; box-shadow: none !important; }
+  html[data-theme="zelda"] .tab-btn.active { background: rgba(14,40,46,.95) !important; color: #FFFFFF !important; border-color: var(--sk) !important;
+    box-shadow: 0 0 0 1px var(--sk), 0 0 16px rgba(125,235,247,.45) !important; }
+
+  /* header = Sheikah Slate */
+  html[data-theme="zelda"] .topbar { background: linear-gradient(180deg, #151E22, #0A1013) !important; border-radius: 16px; padding: 20px 30px; border: 1px solid #000;
+    box-shadow: inset 0 0 0 3px var(--bezel-dark), inset 0 0 0 5px var(--bezel), inset 0 0 0 6px rgba(125,235,247,.35), 0 12px 28px rgba(0,0,0,.35); }
+  html[data-theme="zelda"] .topbar::before, html[data-theme="zelda"] .topbar::after { content: '' !important; display: block !important; position: absolute; top: 22%; height: 56%; width: 7px; border-radius: 4px; pointer-events: none;
+    background: linear-gradient(180deg, #C9651E, #FFC872 50%, #C9651E); box-shadow: 0 0 10px rgba(255,170,70,.55); opacity: 1 !important; transform: none !important; font-size: 0; }
+  html[data-theme="zelda"] .topbar::before { left: -4px; } html[data-theme="zelda"] .topbar::after { right: -4px; left: auto; }
+  html[data-theme="zelda"] h1 { font-family: 'Cinzel', serif !important; font-weight: 700; color: #F3F8F1 !important; letter-spacing: .04em; text-shadow: 0 0 14px rgba(125,235,247,.35); }
+  html[data-theme="zelda"] h1::before { content: '' !important; display: block !important; width: 46px !important; height: 46px !important; flex-shrink: 0; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 fill=%22none%22 stroke=%22%237DEBF7%22 stroke-width=%223.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M7 31 Q32 8 57 31 Q32 49 7 31Z%22/%3E%3Ccircle cx=%2232%22 cy=%2230%22 r=%227.5%22 fill=%22%237DEBF7%22 stroke=%22none%22/%3E%3Cpath d=%22M32 10 V3 M20 14 L15.5 7.5 M44 14 L48.5 7.5%22/%3E%3Cpath d=%22M32 45 Q25.5 53 32 61 Q38.5 53 32 45Z%22 fill=%22%237DEBF7%22 stroke=%22none%22/%3E%3C/svg%3E") center / contain no-repeat !important; filter: drop-shadow(0 0 7px rgba(125,235,247,.85)); -webkit-mask: none !important; mask: none !important; }
+  html[data-theme="zelda"] .eyebrow { color: var(--sk) !important; font-family: 'Cinzel', serif; letter-spacing: .24em; }
+  html[data-theme="zelda"] .topbar .eyebrow::before { content: ''; display: inline-block; width: 74px; height: 12px; margin-right: 10px; vertical-align: -1px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 14 12%22%3E%3Cpath d=%22M7 11.5 C2 8 0.5 6 0.5 3.6 C0.5 1.8 1.9 0.5 3.6 0.5 C5 0.5 6.3 1.4 7 2.6 C7.7 1.4 9 0.5 10.4 0.5 C12.1 0.5 13.5 1.8 13.5 3.6 C13.5 6 12 8 7 11.5Z%22 fill=%22%23E8463E%22 stroke=%22%23FFFFFF%22 stroke-width=%22.9%22/%3E%3C/svg%3E") 0 0 / 14.8px 12px repeat-x; }
+  html[data-theme="zelda"] .topbar select, html[data-theme="zelda"] .topbar .wl-filter { background: rgba(0,0,0,.45) !important; border: 1px solid var(--line) !important; color: #FFFFFF !important; border-radius: 4px !important; }
+  html[data-theme="zelda"] .topbar .btn-ghost { color: var(--sk) !important; }
+  html[data-theme="zelda"] .topbar .btn-ghost:hover { background: rgba(125,235,247,.12) !important; border-color: transparent !important; }
+
+  /* panels = Sheikah Slate windows with corner brackets */
+  html[data-theme="zelda"] .stat, html[data-theme="zelda"] .side-card, html[data-theme="zelda"] .wl-list, html[data-theme="zelda"] .wl-add, html[data-theme="zelda"] .wl-filter { background: var(--slate) !important; border: 1px solid var(--line) !important; border-radius: 4px !important;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 8px 22px rgba(0,0,0,.28) !important; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); position: relative; }
+  html[data-theme="zelda"] .ledger { background: rgba(9,18,22,.93) !important; border: 1px solid var(--line) !important; border-radius: 4px !important; box-shadow: 0 8px 22px rgba(0,0,0,.28) !important; }
+  html[data-theme="zelda"] .stat::after, html[data-theme="zelda"] .side-card::after { content: ''; position: absolute; inset: -1px; pointer-events: none;
+    background: linear-gradient(var(--sk), var(--sk)) left top / 13px 2px no-repeat, linear-gradient(var(--sk), var(--sk)) left top / 2px 13px no-repeat,
+      linear-gradient(var(--sk), var(--sk)) right bottom / 13px 2px no-repeat, linear-gradient(var(--sk), var(--sk)) right bottom / 2px 13px no-repeat; }
+  html[data-theme="zelda"] .stat:first-child { border-color: rgba(255,244,214,.85) !important; box-shadow: 0 0 0 1px rgba(255,244,214,.5), 0 0 22px rgba(255,236,170,.25), inset 0 0 24px rgba(255,236,170,.08) !important; }
+  html[data-theme="zelda"] .stat-label, html[data-theme="zelda"] .side-card-title, html[data-theme="zelda"] .ledger-head, html[data-theme="zelda"] .wl-group-title { color: var(--sk) !important; letter-spacing: .14em; }
+  html[data-theme="zelda"] .side-card-title { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line-soft); padding-bottom: 9px; font-family: 'Cinzel', serif; font-weight: 700; }
+  html[data-theme="zelda"] .side-card-title::before { content: '' !important; display: inline-block !important; width: 7px !important; height: 7px !important; background: var(--sk) !important; transform: rotate(45deg);
+    -webkit-mask: none !important; mask: none !important; box-shadow: 0 0 8px var(--sk); flex-shrink: 0; }
+  html[data-theme="zelda"] .stat-value, html[data-theme="zelda"] .cal-title { font-family: 'Cinzel', serif !important; font-weight: 700; }
+  html[data-theme="zelda"] .stat:first-child .stat-value { color: #FFFFFF !important; display: inline-flex; align-items: center; gap: 8px; }
+  html[data-theme="zelda"] .stat:first-child .stat-value::before { content: ''; width: 14px; height: 22px; flex-shrink: 0; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 32%22%3E%3Cpath d=%22M10 0 L20 8 L20 24 L10 32 L0 24 L0 8Z%22 fill=%22%232FBF5B%22 stroke=%22%230E5A28%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M10 5 L15 9.5 L15 22.5 L10 27 L5 22.5 L5 9.5Z%22 fill=%22%238DF0A9%22/%3E%3Cpath d=%22M10 5 L15 9.5 L10 13 L5 9.5Z%22 fill=%22%23D8FFE4%22/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 0 5px rgba(80,230,130,.6)); }
+  html[data-theme="zelda"] .progress-track, html[data-theme="zelda"] .inst-progress-track, html[data-theme="zelda"] .wl-bar { background: rgba(0,0,0,.45) !important; border: 1px solid var(--line-soft); }
+  html[data-theme="zelda"] .progress-fill { background: linear-gradient(90deg, #6FCF45, #C2F56E) !important; box-shadow: 0 0 9px rgba(158,224,106,.65); }
+  html[data-theme="zelda"] .modal-box { background: #0D171B !important; border: 1px solid var(--line) !important; }
+
+  /* rows, inputs, checkboxes */
+  html[data-theme="zelda"] .row { border-bottom-color: var(--line-soft); }
+  html[data-theme="zelda"] .row:hover { background: rgba(125,235,247,.05); }
+  html[data-theme="zelda"] .row.is-paid, html[data-theme="zelda"] .wl-item.done { background: rgba(158,224,106,.06); }
+  html[data-theme="zelda"] .checkbox, html[data-theme="zelda"] .wl-check { border-radius: 3px !important; border: 1px solid var(--line) !important; background: rgba(0,0,0,.35) !important; }
+  html[data-theme="zelda"] .checkbox.checked, html[data-theme="zelda"] .wl-check.on { background: var(--teal) !important; border-color: var(--teal) !important; box-shadow: 0 0 10px rgba(158,224,106,.65) !important; }
+  html[data-theme="zelda"] .amount-cell input, html[data-theme="zelda"] .wl-field, html[data-theme="zelda"] .wl-seg, html[data-theme="zelda"] .wl-price input, html[data-theme="zelda"] .inst-row-fields input, html[data-theme="zelda"] select { background: rgba(0,0,0,.38) !important; border-color: var(--line) !important; color: #FFFFFF !important; }
+  html[data-theme="zelda"] select option { background: #0D171B; }
+  html[data-theme="zelda"] .theme-pick select { background: rgba(9,18,22,.88) !important; }
+  html[data-theme="zelda"] .theme-pick span { color: var(--sk); }
+  html[data-theme="zelda"] .add-row button, html[data-theme="zelda"] .wl-add-btn { background: rgba(9,18,22,.6) !important; border: 1px dashed var(--sk-dim) !important; color: var(--sk) !important; font-family: 'Cinzel', serif; font-weight: 700;
+    letter-spacing: .05em; border-radius: 4px !important; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none !important; }
+  html[data-theme="zelda"] .add-row button::before, html[data-theme="zelda"] .wl-add-btn::before { content: none !important; display: none !important; }
+  html[data-theme="zelda"] .add-row button::after, html[data-theme="zelda"] .wl-add-btn::after { content: 'A'; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; display: inline-flex; align-items: center;
+    justify-content: center; font: 700 10px/1 'Inter', sans-serif; flex-shrink: 0; }
+
+  /* Korok peeking over the expense list */
+  html[data-theme="zelda"] .main-col .ledger { overflow: visible !important; position: relative; margin-top: 48px !important; }
+  html[data-theme="zelda"] .main-col .ledger::before { content: '' !important; display: block !important; position: absolute; top: -56px; right: 40px; left: auto; width: 92px; height: 58px; z-index: 2; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 96 60%22%3E%3Cpath d=%22M48 22 C48 13 50 8 55 4%22 fill=%22none%22 stroke=%22%234E7E2A%22 stroke-width=%222.6%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M55 4 C62 -1 72 2 75 7 C66 9 60 8 55 4Z%22 fill=%22%237DBA45%22 stroke=%22%233E6C22%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M24 60 C21 40 28 22 48 21 C68 22 75 40 72 60Z%22 fill=%22%23C9A06A%22 stroke=%22%236E4B27%22 stroke-width=%222.2%22/%3E%3Cpath d=%22M31 31 C39 27 57 27 65 31 M27 44 C38 41 58 41 69 44%22 fill=%22none%22 stroke=%22%23A47A47%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M48 58 C32 54 24 44 26 35 C28 28 37 27 43 32 C45 28 47 27 48 27 C49 27 51 28 53 32 C59 27 68 28 70 35 C72 44 64 54 48 58Z%22 fill=%22%235DAE3A%22 stroke=%22%232C661C%22 stroke-width=%222%22/%3E%3Cpath d=%22M48 29 V55 M48 38 L36 33 M48 38 L60 33 M48 46 L34 43 M48 46 L62 43%22 fill=%22none%22 stroke=%22%23A9DD7B%22 stroke-width=%221.5%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%2239%22 cy=%2240%22 r=%223.4%22 fill=%22%231B1B17%22/%3E%3Ccircle cx=%2257%22 cy=%2240%22 r=%223.4%22 fill=%22%231B1B17%22/%3E%3Cpath d=%22M45 47.5 L51 47.5 L48 51.5Z%22 fill=%22%231B1B17%22/%3E%3Cpath d=%22M10 58 L22 51 M86 58 L74 51%22 stroke=%22%238A6236%22 stroke-width=%224.5%22 stroke-linecap=%22round%22/%3E%3Cellipse cx=%2211%22 cy=%2252%22 rx=%224.5%22 ry=%222.6%22 fill=%22%236FB43F%22 transform=%22rotate%28-30 11 52%29%22/%3E%3Cellipse cx=%2285%22 cy=%2252%22 rx=%224.5%22 ry=%222.6%22 fill=%22%236FB43F%22 transform=%22rotate%2830 85 52%29%22/%3E%3C/svg%3E") center bottom / contain no-repeat !important; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); transform: none; }
+  html[data-theme="zelda"] [id$="-rows"]:empty::before { background: none !important; padding: 22px 18px !important; }
+  html[data-theme="zelda"] .wl-empty { background: none !important; padding: 16px 18px !important; text-align: left; }
+
+  /* sound toggle */
+  html[data-theme="zelda"] .sound-toggle { display: inline-flex; background: rgba(9,18,22,.85); border: 1px solid var(--sk); border-radius: 4px; }
+  html[data-theme="zelda"] .sound-toggle + .theme-pick { margin-left: 8px; }
+
+  @media (max-width: 640px) {
+    html[data-theme="zelda"] .topbar { padding: 16px 18px; border-radius: 13px; }
+    html[data-theme="zelda"] h1 { font-size: 22px !important; }
+    html[data-theme="zelda"] h1::before { width: 36px !important; height: 36px !important; }
+    html[data-theme="zelda"] .topbar .eyebrow::before { width: 59px; background-size: 11.8px 10px; height: 10px; }
+    html[data-theme="zelda"] .main-col .ledger { margin-top: 40px !important; }
+    html[data-theme="zelda"] .main-col .ledger::before { width: 72px; height: 46px; top: -44px; right: 20px; }
+    html[data-theme="zelda"] .stat:first-child .stat-value::before { width: 10px; height: 16px; }
+  }
 </style>
 </head>
 <body data-tab="personal">
@@ -1447,6 +1550,7 @@
           <option value="arsenal27">Arsenal 26/27</option>
           <option value="kh">Kingdom Hearts</option>
           <option value="ff">Final Fantasy</option>
+          <option value="zelda">Zelda: Breath of the Wild</option>
         </select>
       </label>
     </div>
@@ -2706,7 +2810,7 @@ function liveMoney(input) {
     return pools[name];
   }
   // which file each theme uses; a theme without a 'save' sound uses its 'select' sound for confirmations too
-  const SOUNDS = { kh: { select: 'kh-select', save: 'kh-save' }, ff: { select: 'ff-select' } };
+  const SOUNDS = { kh: { select: 'kh-select', save: 'kh-save' }, ff: { select: 'ff-select' }, zelda: { select: 'zelda-select', save: 'zelda-save' } };
   const themeSounds = () => SOUNDS[document.documentElement.dataset.theme];
   const active = () => !!themeSounds() && enabled;
   let last = 0;
