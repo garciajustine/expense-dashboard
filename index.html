@@ -1517,6 +1517,26 @@
     html[data-theme="zelda"] .main-col .ledger::before { width: 72px; height: 46px; top: -44px; right: 20px; }
     html[data-theme="zelda"] .stat:first-child .stat-value::before { width: 10px; height: 16px; }
   }
+
+  /* ===== Scroll to top / bottom buttons ===== */
+  .scroll-btns { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
+    display: flex; flex-direction: column; gap: 8px; z-index: 25; pointer-events: none; }
+  .scroll-btns .scroll-btn { pointer-events: auto; width: 38px; height: 38px; min-height: 0; padding: 0; border-radius: 50% !important; display: flex; align-items: center; justify-content: center;
+    background: var(--panel); border: 1px solid var(--line); color: var(--text-dim); box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .2s, transform .2s, visibility .2s, color .15s, border-color .15s; }
+  .scroll-btns .scroll-btn.show { opacity: .94; visibility: visible; transform: none; }
+  .scroll-btns .scroll-btn:hover { opacity: 1; color: var(--gold); border-color: var(--gold); background: var(--panel); }
+  .scroll-btns .scroll-btn svg { width: 18px; height: 18px; }
+  html[data-theme="pokopia"] .scroll-btns { bottom: 220px; }
+  html[data-theme="pokopia"] .scroll-btns .scroll-btn { background: #FFFFFF; border: 0; color: #6A6661; box-shadow: 0 3px 0 rgba(0,0,0,.10); }
+  html[data-theme="zelda"] .scroll-btns .scroll-btn { background: rgba(9,18,22,.9); border-color: var(--sk); color: var(--sk); }
+  html[data-theme="ff"] .scroll-btns .scroll-btn { background: var(--win); border: 2px solid var(--win-edge); color: #FFFFFF; }
+  @media (max-width: 640px) {
+    .scroll-btns { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 4px); right: 10px; gap: 6px; }
+    .scroll-btns .scroll-btn { width: 34px; height: 34px; }
+    html[data-theme="pokopia"] .scroll-btns { bottom: 142px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .scroll-btns .scroll-btn { transition: none; } }
 </style>
 </head>
 <body data-tab="personal">
@@ -2848,6 +2868,29 @@ function liveMoney(input) {
     btn.title = btn.ariaLabel = enabled ? 'Sound on' : 'Sound off'; btn.setAttribute('aria-label', btn.title); };
   paint();
   btn.addEventListener('click', () => { enabled = !enabled; try { localStorage.setItem(KEY, enabled ? 'on' : 'off'); } catch (e) {} paint(); if (enabled) { last = 0; play('select'); } });
+})();
+
+
+// ===== Scroll to top / bottom buttons =====
+(function scrollButtons() {
+  const arrow = d => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="' + d + '"/></svg>';
+  const wrap = document.createElement('div'); wrap.className = 'scroll-btns';
+  wrap.innerHTML = '<button type="button" class="scroll-btn" id="scroll-top-btn" aria-label="Scroll to top" title="Scroll to top">' + arrow('M6 14l6-6 6 6') + '</button>'
+                 + '<button type="button" class="scroll-btn" id="scroll-bottom-btn" aria-label="Scroll to bottom" title="Scroll to bottom">' + arrow('M6 10l6 6 6-6') + '</button>';
+  document.body.appendChild(wrap);
+  const up = wrap.children[0], down = wrap.children[1];
+  const smooth = () => (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth';
+  function update() {
+    const max = document.documentElement.scrollHeight - window.innerHeight, y = window.scrollY;
+    up.classList.toggle('show', y > 200);
+    down.classList.toggle('show', max - y > 200);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
+  up.addEventListener('click', () => window.scrollTo({ top: 0, behavior: smooth() }));
+  down.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: smooth() }));
+  update();
 })();
 
 function startApp() {
